@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'tex-strela',                      # Or path to database file if using sqlite3.
         'USER': 'root',
         'PASSWORD': '',    # Not used with sqlite3.
-        'HOST': '',  # Используйте это значение для подключения к MySQL на том же хосте
+        'HOST': '127.0.0.1',  # Используйте это значение для подключения к MySQL на том же хосте
         'PORT': '3306',
     }
 }

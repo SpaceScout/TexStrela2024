@@ -1,20 +1,28 @@
-/* Общие стили */
+@font-face {
+  font-family: "Montserrat Alternates Black";
+  src: url("../fonts/MontserratAlternates-Black.ttf") format("truetype"), url("../fonts/montserratalternates-black-webfont.woff2") format("woff2"), url("../fonts/montserratalternates-black-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+/* Common styles */
 *,
-:before,
-:after {
+*:before,
+*:after {
   box-sizing: border-box;
 }
 
-/* Шрифты */
+/* Fonts */
 body {
-  font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  color: #121113;
+  background-color: #fcfff7;
+  font-family: "Montserrat", sans-serif;
 }
 
-/* Безымянные стили */
+/* Unstyled styles */
 .unstyled {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin-left: 20px;
 }
 
 .list-inline {
@@ -25,7 +33,7 @@ body {
   float: left;
 }
 
-/* Стили для headernav */
+/* Headernav styles */
 .headernav {
   position: fixed;
   height: 100%;
@@ -33,110 +41,128 @@ body {
   top: 0;
   bottom: 0;
   width: 15em;
-  background: #fff;
+  background-color: #fcfff7;
   align-items: center;
   margin-top: 100px;
 }
 
-/* Стили для логотипа */
+/* Logo styles */
 .logo {
+  font-family: "Montserrat Alternates Black", sans-serif;
+  font-weight: 900;
   float: left;
   display: block;
-  color: black;
+  color: #cc2936;
   text-align: center;
   padding: 25px 30px;
-  text-align: center;
+  cursor: default;
 }
-
 .logo a {
+  font-weight: 900;
+  font-style: normal;
   display: block;
-  color: #CC2936;
-  font-weight: 700;
-  font-size: 30 px;
+  color: #cc2936;
+  font-size: 30px;
   text-decoration: none;
   transition: 0.15s linear color;
 }
 
-/* Стили для основной навигации */
-.main-nav ul {
-
-}
-
-.main-nav li {
-
-}
-
+/* Main navigation styles */
 .main-nav a {
+  font-size: 24px;
   padding: 1.1em 0;
-  color: #000000;
-  font: 1.5em 'Source Sans Pro', Helvetica, Arial, sans-serif;
-  text-align: center;
-  transition: transform 0.5s ease;
+  color: #121113;
 }
-
 .main-nav a:hover {
-  transform: scale(1.1);
-  color: #CC2936;
+  color: #cc2936;
+  text-decoration: none;
 }
 
-/* Дополнительные стили для hover slide effect */
+/* Additional styles for hover slide effect */
 .list-hover-slide li {
   position: relative;
-  overflow: hidden;
 }
-
 .list-hover-slide a {
   display: block;
   position: relative;
   z-index: 1;
   transition: 0.35s ease color;
 }
-
-.list-hover-slide a.is-current,
-.list-hover-slide a:hover:before {
+.list-hover-slide a.is-current, .list-hover-slide a:hover:before {
   left: 0;
 }
-
-
-main {
-  background: #F5F5F5;
+.list-hover-slide .upload {
+  font-size: 24px;
+  width: 203px;
+  height: 50px;
   border-radius: 15px;
-  margin-left: 16em; /* Ширина вашего вертикального меню (headernav) */
-  height: calc(100vh - 100px); /* Рассчитываем высоту как 100% высоты видимой области минус высота верхнего меню */
-  overflow: auto; /* Добавим прокрутку, если контент внутри main будет больше, чем доступное пространство */
+  display: flex;
+  align-items: center;
+  box-shadow: 3px 3px #121113, -1em 0 0.3em #121113;
+}
+.list-hover-slide .upload .feedback__file {
+  display: none;
 }
 
+/* Main content styles */
+main {
+  background: #f5f5f5;
+  border-top-left-radius: 15px;
+  margin-left: 16em;
+  height: calc(100vh - 94px);
+  overflow: auto;
+}
+
+/* Top navigation styles */
 .topnav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   overflow: hidden;
-  background-color: #fff;
+  background-color: #fcfff7;
   position: relative;
 }
-
-.buttons-container {
+.topnav .buttons-container {
   display: flex;
   align-items: center;
 }
-
-.buttons-container button {
-  margin-right: 10px; /* Регулируйте отступ между кнопками, как вам нужно */
+.topnav .buttons-container button {
+  margin-right: 10px;
 }
-
-/* Style the search box inside the navigation bar */
-.topnav input[type="text"] {
-  padding: 6px;
-  font-size: 17px;
-  width: 35%;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+.topnav .search-input {
+  background-color: transparent !important;
+  height: 50px;
+  width: 720px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 17px;
+  border: 3px solid #6c6f7d;
+  border-radius: 15px;
 }
-
-/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+.topnav .search-input input[type=text] {
+  width: 620px;
+  padding: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 44px;
+  border: none;
+  font-size: 16px;
+  color: #121113;
+}
+.topnav .search-input input[type=text]:focus {
+  border: none;
+  outline: none;
+}
+.topnav .search-input .search:hover {
+  cursor: pointer;
+}
+.topnav .search-input .menu-burger:hover {
+  cursor: pointer;
+}
 @media screen and (max-width: 600px) {
-  .topnav a, .topnav input[type="text"] {
+  .topnav a,
+  .topnav input[type=text] {
     float: none;
     display: block;
     text-align: left;
@@ -144,29 +170,29 @@ main {
     margin: 0;
     padding: 14px;
   }
-  .topnav input[type="text"] {
+  .topnav a:last-child,
+  .topnav input[type=text]:last-child {
     border: 1px solid #ccc;
   }
 }
 
-/*Див фоток*/
+/* Gallery styles */
 div.gallery {
   margin: 5px;
   border: 1px solid #ccc;
   float: left;
   width: 180px;
 }
-
 div.gallery:hover {
   border: 1px solid #777;
 }
-
 div.gallery img {
   width: 100%;
   height: auto;
 }
-
-div.desc {
+div.gallery .desc {
   padding: 15px;
   text-align: center;
 }
+
+/*# sourceMappingURL=main.css.map */
