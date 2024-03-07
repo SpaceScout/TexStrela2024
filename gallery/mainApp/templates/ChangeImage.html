@@ -1,0 +1,29 @@
+{% extends 'BaseGallery.html' %}
+
+
+{% block title %}ChangeImage{% endblock %}
+
+{% block content %}
+<!-- style="filter: brightness(50%);" -->
+    <div style="display: inline-block; width: 50%;"><img id="imageforchanging" src="{{photourl}}"  alt="photo" width="100%" height="auto"></div>
+    <!-- МЕНЮ ИЗМЕНЕНИЯ КАРТИНКИ -->
+    <div style="height: 95%;
+                width: 30%;
+                background-color: white;
+                float: right;
+                border-radius: 10px;
+                text-align: center;">
+        
+        
+        <div class="sliders"><label for="brightness">Brightness:</label>
+            <input id="brightness" oninput="changeBrightness(this.value)" type="range" name="brightness" min="0" max="200" value="100" data-sizing="%"><span id="spanBrightnessValue" class="slider-value">100%<span>
+        </div> 
+        <div class="sliders"><label for="contrast">Contrast:</label>
+            <input id="contrast" oninput="changeContrast(this.value)" type="range" name="contrast" min="0" max="200" value="100" data-sizing="%"><span id="spanContrastValue" class="slider-value">100%<span>
+        </div> 
+
+            
+    </div>
+    
+{% endblock %}
+

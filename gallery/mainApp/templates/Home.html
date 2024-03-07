@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#RegisterModal">
+    Регистрация
+    </button>
+
+    <form method="post" name="register_form">
+    {% csrf_token %}
+      <div class="modal fade" id="RegisterModal" tabindex="-1" role="dialog" aria-labelledby="RegisterModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="RegisterModalLabel">Registration</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              {{ registration_form.as_p }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" name="register_form">Register</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#LoginModal">
+    Авторизация
+    </button>
+    <form method="post" name="login_form">
+      {% csrf_token %}
+      <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="LoginModalLabel">Auth</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              {{ login_form.as_p }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" name="login_form">Sign in</button>
+            </div>
+          </div>
+        </div>
+      </div>
+     </form>
+
+<script>
+    {% if show_registration_form %}
+        // Открываем модальное окно для формы регистрации
+        $(document).ready(function () {
+            $('#RegisterModal').modal('show');
+        });
+    {% endif %}
+
+    {% if show_login_form %}
+        // Открываем модальное окно для формы входа
+        $(document).ready(function () {
+            $('#LoginModal').modal('show');
+        });
+    {% endif %}
+
+    $(document).ready(function () {
+        // Очищаем все поля формы при закрытии модального окна
+        $('.modal').on('hidden.bs.modal', function () {
+            $(this).find('form')[0].reset();
+        });
+    });
+</script>
+{% endblock %}
