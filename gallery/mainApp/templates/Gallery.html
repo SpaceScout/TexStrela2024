@@ -1,17 +1,17 @@
-
 {% extends 'BaseGallery.html' %}
-{% load static %}
 
 {% block title %}Gallery{% endblock %}
 
 {% block content %}
-    {% for photo in photos %}
-        <div class="gallery">
-          <a target="_blank" href="changeimage/?photo={{photo.image.url}}">
-            <img src="{{photo.image.url}}" alt="photo" width="250" height="380">
-
-          </a>
-          <div class="desc">Загружено {{photo.created_at|date:"d.m.Y в H:i"}}</div>
+    {% csrf_token %}
+    {% for file in photos %}
+        <div class="gallery" data-photo-id="{{ file.id }}">
+            <h4>{{ file.title }}</h4>
+            <a target="_blank" href="changeimage/?photo={{file.file.url}}&id={{file.id}}">
+                <!-- #target="_blank" href="changeimage/?photo={{file.file.url}} -->
+                <img src="{{file.file.url}}" alt="photo" width="250" height="380">
+            </a>
+            <div class="desc">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</div>
         </div>
-        {% endfor %}
+    {% endfor %}
 {% endblock %}

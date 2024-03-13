@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from multiupload.fields import MultiFileField
-from mainApp.models import Photo, CustomUser
+from mainApp.models import CustomUser, Album
 
 
 class PasswordInputNoAutocomplete(forms.PasswordInput):
@@ -52,10 +52,36 @@ class CustomUserAuthForm(AuthenticationForm):
         self.fields = {key: self.fields[key] for key in self.field_order}
 
 
-class MultiPhotoForm(forms.ModelForm):
-    images = forms.FileField(validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])])
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = single_file_clean(data, initial)
+        return result
+
+
+class MultiFileForm(forms.Form):
+    files = MultipleFileField(validators=[
+        FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mov'])])
+
+
+class CreateAlbum(forms.ModelForm):
+
+    title = forms.CharField(
+        label='',
+        widget=forms.TextInput(attrs={'autofocus': True, 'placeholder': 'Новый альбом'})
+    )
 
     class Meta:
-        model = Photo
-        fields = ['images']
-
+        model = Album
+        fields = ['title', ]

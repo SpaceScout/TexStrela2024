@@ -1,0 +1,37 @@
+{% extends 'BaseGallery.html' %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block content %}
+    <button type="button" class="create-album" data-toggle="modal" data-target="#exampleModal">
+      +
+      Новый альбом
+    </button>
+
+    <form id="upload-form" action="" method="post" autocomplete="off" enctype="multipart/form-data">
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Укажите название альбома</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              {{ album_form.as_p }}
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Создать</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    {% for album in albums %}
+        <div class="album">
+            <a href="{% url 'album_files' album.id %}">{{ album.title }}</a>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'BaseGallery.html' %}
+
+{% block content %}
+    {% csrf_token %}
+    {% for video in videos %}
+        <div class="gallery" data-photo-id="{{ video.id }}">
+            <h4>{{ video.title }}</h4>
+            <a target="_blank" href="{{ video.file.url }}">
+                <video controls width="250" height="380">
+                    <source src="{{ video.file.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </a>
+            <div class="desc">Загружено {{ video.created_at|date:"d.m.Y в H:i" }}</div>
+        </div>
+    {% endfor %}
+{% endblock %}

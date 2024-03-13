@@ -3,12 +3,22 @@
 :before,
 :after {
   box-sizing: border-box;
-  
 }
 
 /* Шрифты */
 body {
   font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+}
+
+.input-group {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  width: 100%;
 }
 
 /* Безымянные стили */
@@ -58,20 +68,7 @@ body {
   transition: 0.15s linear color;
 }
 
-/* Стили для изменения картинки */
-.sidemenuchangeimage {
-  height: 95%;
-  width: 30%;
-  background-color: white;
-  float: right;
-  border-radius: 10px;
-  text-align: center;
-}
-
-
 /* Стили для основной навигации */
-
-
 .main-nav ul {
 
 }
@@ -187,4 +184,151 @@ div.gallery img {
 div.desc {
   padding: 15px;
   text-align: center;
+}
+
+/*Див альбомов*/
+button.create-album {
+  margin: 20px;
+  border: 1px solid #ccc;
+  float: left;
+  width: 250px;
+  height: 150px;
+  background: #D9D9D9;
+}
+
+div.album {
+  margin: 20px;
+  border: 1px solid #ccc;
+  float: left;
+  width: 250px;
+  height: 150px;
+  background: #D9D9D9;
+}
+
+/*добавление фоток в альбом(чекбокс фоток)*/
+ul {
+  list-style-type: none;
+}
+
+li {
+  display: inline-block;
+}
+
+input[type="checkbox"][id^="myCheckbox"] {
+  display: none;
+}
+
+label {
+  border: 1px solid #fff;
+  padding: 10px;
+  display: block;
+  position: relative;
+  margin: 10px;
+  cursor: pointer;
+}
+
+label:before {
+  background-color: white;
+  color: white;
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  border: 1px solid grey;
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  line-height: 28px;
+  transition-duration: 0.4s;
+  transform: scale(0);
+}
+
+label img {
+  height: 100px;
+  width: 100px;
+  transition-duration: 0.2s;
+  transform-origin: 50% 50%;
+}
+
+:checked + label {
+  border-color: #ddd;
+}
+
+:checked + label:before {
+  content: "✓";
+  background-color: grey;
+  transform: scale(1);
+}
+
+:checked + label img {
+  transform: scale(0.9);
+  /* box-shadow: 0 0 5px #333; */
+  z-index: -1;
+}
+
+/*райт клик меню по фотке*/
+.context-sub-menu,
+.context-menu {
+  position: fixed;
+  background: #fff;
+  z-index: 9999999;
+  width: 120px;
+  margin: 0;
+  padding: 5px 0;
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+  font-size: 12px;
+}
+
+.context-menu .context-menu-item {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.context-menu .context-menu-item span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.context-menu-item:last-of-type {
+  border-bottom: none;
+}
+
+.context-menu .context-menu-item:hover {
+  background: #f2f2f2;
+}
+
+.context-menu .context-sub-menu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  display: none;
+  width: 100px;
+}
+
+.context-menu .context-menu-item:hover > .context-sub-menu {
+  display: block;
+}
+
+.context-menu.left .context-sub-menu {
+  left: 0;
+  transform: translateX(-100%);
+}
+
+.context-menu.top .context-sub-menu {
+  top: 100%;
+  transform: translateY(-100%);
+}
+
+.context-menu.left.top .context-sub-menu {
+  transform: translate(-100%, -100%);
 }
