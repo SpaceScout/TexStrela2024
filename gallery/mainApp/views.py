@@ -215,6 +215,44 @@ def crop_image(request):
         
         return render(request, 'CropImage.html', {'photourl': photo_url, 'photoid': photo_id})
 
+@login_required
+def add_text(request):
+    if request.method == 'GET':
+        photo_url = request.GET.get('photo')
+        photo_id = request.GET.get('id')
+        
+        
+        return render(request, 'AddTextToImage.html', {'photourl': photo_url, 'photoid': photo_id})
+    
+def save_text_on_image(request):
+
+    textX = int(request.GET.get('textX'))
+    textY = int(request.GET.get('textY'))
+    textValue = request.GET.get('textValue')
+    textColor = request.GET.get('textColor')
+    textSize = round(float(request.GET.get('textSize')))
+    id = request.GET.get('id')
+
+    myModel = Files.objects.get(pk=id)
+
+    original_photo = BytesIO(myModel.file.read())
+    output_photo = BytesIO()
+
+    image = Image.open(original_photo)
+    
+
+    font = ImageFont.load_default(size=textSize)
+    width, height = image.size
+    draw_text = ImageDraw.Draw(image)
+    draw_text.text(((width*int(textX))/100, (height*int(textY))/100), textValue, fill=textColor, font=font)
+    image.save(output_photo, 'JPEG')
+
+    myModel.file.save(f"{id}_withtext.jpg", ContentFile(output_photo.getvalue()))
+    myModel.save()
+
+    path = myModel.file.path
+    return HttpResponse(json.dumps({'filepath': path[path.index("media")-1::]}),content_type="application/json")
+
 def save_cropped_image(request):
     print("WE ARE IN SAVING CROPPED IMAGE")
     x = int(request.GET.get('x'))
@@ -230,14 +268,8 @@ def save_cropped_image(request):
     output_photo = BytesIO()
 
     image = Image.open(original_photo)
-    # print(x,y,height,width)
-    image = image.crop((x,y,x+width,y+height))
-    # image = image.crop((190,40,340+190,380))
 
-    # image = image.rotate(-int(rValue))
-    # image = enhBrightness.enhance(int(bValue) / 100)
-    # enhContrast = ImageEnhance.Contrast(image)
-    # image = enhContrast.enhance(int(cValue) / 100 )
+    image = image.crop((x,y,x+width,y+height))
     
     image.save(output_photo, 'JPEG')
 
@@ -247,7 +279,8 @@ def save_cropped_image(request):
     myModel.save()
 
     path = myModel.file.path
-    # return HttpResponse(json.dumps({'filepath': path[path.index("\media")::]}),content_type="application/json")
+    return HttpResponse(json.dumps({'filepath': path[path.index("media")-1::]}),content_type="application/json")
+
 
 
 
@@ -258,9 +291,9 @@ def save_image(request):
         rValue = request.GET.get('rotation')
         photo = request.GET.get('photo')
         id = request.GET.get('id')
-        textX = request.GET.get('textX')
-        textY = request.GET.get('textY')
-        textValue = request.GET.get('textValue')
+        # textX = request.GET.get('textX')
+        # textY = request.GET.get('textY')
+        # textValue = request.GET.get('textValue')
 
         
 
@@ -274,19 +307,24 @@ def save_image(request):
         
         enhBrightness = ImageEnhance.Brightness(image)
 
-        image = image.rotate(-int(rValue))
+        
+        
         image = enhBrightness.enhance(int(bValue) / 100)
+        
         enhContrast = ImageEnhance.Contrast(image)
         image = enhContrast.enhance(int(cValue) / 100 )
-
-        print(textY, textX, textValue)
-
-        if textValue:
-            font = ImageFont.load_default(size=16*3)
-            width, height = image.size
-            draw_text = ImageDraw.Draw(image)
-            draw_text.text(((width*int(textX))/100, (height*int(textY))/100), textValue, fill='#1C0606', font=font)
         
+
+        # print(textY, textX, textValue)
+
+        # if textValue:
+        #     font = ImageFont.load_default(size=16*3)
+        #     width, height = image.size
+        #     draw_text = ImageDraw.Draw(image)
+        #     draw_text.text(((width*int(textX))/100, (height*int(textY))/100), textValue, fill='#1C0606', font=font)
+        
+        image = image.rotate(-int(rValue))
+
         image.save(rotated_photo, 'JPEG')
 
         
