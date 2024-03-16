@@ -18,6 +18,7 @@ urlpatterns = [
 
     path('delete/<int:file_id>/', views.delete_file, name="deleting"),
     path('download/<int:file_id>/', views.download_file_view, name="saving"),
+    path('albums/<int:album_id>/download/', views.download_album, name='download_album'),
 
     re_path(r'^add-user-to-album/$', views.add_user_to_album, name="adding_user"),
     re_path(r'^delete-user-from-album/$', views.delete_user_from_album, name="deleting_user"),

@@ -55,4 +55,4 @@ class Album(models.Model):
     files = models.ManyToManyField(Files, related_name='albums_files', blank=True, unique=False)
 
     def __str__(self):
-        return f"{self.author.email}'s Album: {self.title}"
+        return f"{self.user.email}'s Album: {self.title}"

@@ -4,7 +4,9 @@
 {% block title %}Gallery{% endblock %}
 
 {% block content %}
-    <h2>Альбом {{ album.title }}</h2>
+    <div class="album_title_div">
+        <h2 class="album_title">{{ album.title }}<a href="{% url 'download_album' album.id %}" class="button"><i class="bi bi-download"></i></a></h2>
+    </div>
     {% if not member %}
         {% csrf_token %}
         <!--    bootstrap element для открывающего списка. Там открываются участники альбома(кроме админа) и поле для добавления по email в альбом-->

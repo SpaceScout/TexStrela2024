@@ -29,16 +29,25 @@
         </div>
       </div>
     </form>
-    <h4>Ваши альбомы</h4>
-    {% for album in albums %}
-        <div class="album">
-            <a href="{% url 'album_files' album.id %}">{{ album.title }}</a>
-        </div>
-    {% endfor %}
-    <h4>Общие альбомы</h4>
-    {% for shared_album in shared_albums %}
-        <div class="album">
-            <a href="{% url 'album_files' shared_album.id %}">{{ shared_album.title }}</a>
-        </div>
-    {% endfor %}
+
+    <div class="your-albums">
+        <h4>Ваши альбомы</h4>
+        {% for album in albums %}
+            <a  class="album" href="{% url 'album_files' album.id %}">
+                <h2 class="album_name">{{ album.title }}</h2>
+                <a class="album_download" href="{% url 'download_album' album.id %}">Скачать</a>
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="shared-albums">
+        <h4>Общие альбомы</h4>
+        {% for shared_album in shared_albums %}
+        <a class="album" href="{% url 'album_files' shared_album.id %}">
+            <h2 class="album_name">{{ shared_album.title }}</h2>
+            <a class="album_download" href="{% url 'download_album' shared_album.id %}">Скачать</a>
+        </a>
+      {% endfor %}
+    </div>
+
 {% endblock %}

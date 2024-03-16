@@ -1,19 +1,31 @@
 {% extends 'BaseGallery.html' %}
+{% load static %}
 
 {% block title %}Gallery{% endblock %}
 
 {% block content %}
     {% csrf_token %}
-    {% for file in photos %}
-<!--    bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
-        <div class="card" style="width: 18rem;" data-photo-id="{{ file.id }}">
-            <a target="_blank" href="changeimage/?photo={{file.file.url}}&id={{file.id}}">
-                <img src="{{file.file.url}}" class="card-img-top" alt="photo">
-            </a>
-            <div class="card-body">
-                <h5 class="card-title">{{ file.title }}</h5>
-                <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
+    {% if photos %}
+        {% for file in photos %}
+            <!--bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
+            <div class="card" style="width: 18rem;" data-photo-id="{{ file.id }}">
+                <a target="_blank" href="changeimage/?photo={{file.file.url}}&id={{file.id}}">
+                    <img src="{{file.file.url}}" class="card-img-top" alt="photo">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ file.title }}</h5>
+                    <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="zero_gallery">
+            <div>
+                <h2 class="zero_text">Ваше хранилище пусто</h2>
+            </div>
+            <div>
+                <img class="zero_img" src="{% static 'img/box.png'%}">
             </div>
         </div>
-    {% endfor %}
+    {% endif %}
 {% endblock %}

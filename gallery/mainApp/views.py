@@ -1,5 +1,6 @@
 import json
-from io import StringIO, BytesIO
+import os
+from io import BytesIO
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
@@ -7,7 +8,8 @@ from django.db.models import Q
 from django.http import Http404, JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from PIL import Image, ImageEnhance, ImageDraw, ImageFont
-from django.views.decorators.csrf import csrf_exempt
+import io
+import zipfile
 
 from mainApp.forms import CustomUserCreationForm, MultiFileForm, CustomUserAuthForm, CreateAlbum
 from mainApp.models import Files, Album, CustomUser, Tag
@@ -203,6 +205,31 @@ def download_file_view(request, file_id):
 
     # Устанавливаем заголовки для скачивания файла
     response['Content-Disposition'] = f'attachment; filename="{file_object.file.name}"'
+    return response
+
+
+@login_required
+def download_album(request, album_id):
+    # Получаем альбом по его ID
+    album = Album.objects.get(id=album_id)
+
+    # Создаем объект для записи в память
+    zip_buffer = io.BytesIO()
+
+    # Создаем zip-архив в памяти
+    with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zipf:
+        # Добавляем файлы альбома в zip-архив
+        for file in album.files.all():
+            file_content = file.file.read()  # Читаем содержимое файла
+            file_name = os.path.basename(file.file.name)
+            zipf.writestr(file_name, file_content)
+
+    # Устанавливаем указатель в начало объекта для чтения из памяти
+    zip_buffer.seek(0)
+
+    # Отправляем zip-архив как ответ
+    response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename="{album.title}.zip"'
     return response
 
 

@@ -183,15 +183,36 @@ button.create-album {
   width: 250px;
   height: 150px;
   background: #D9D9D9;
+  margin-bottom: 10px;
+  font-size: 1.5em;
 }
 
-div.album {
+/* Стили для блока ваших альбомов */
+.your-albums {
+  clear: both; /* Очищаем обтекание для следующего блока */
+  margin-top: 20px;
+}
+
+/* Стили для блока общих альбомов */
+.shared-albums {
+  clear: both; /* Очищаем обтекание */
+  margin-top: 20px;
+}
+
+/* Стили для отдельного альбома */
+.album,
+.album:hover {
   margin: 20px;
   border: 1px solid #ccc;
   float: left;
   width: 250px;
   height: 150px;
   background: #D9D9D9;
+  display: flex; /* Используем flexbox для контейнера */
+  justify-content: center; /* Центрируем по горизонтали */
+  align-items: center; /* Центрируем по вертикали */
+  text-decoration: none;
+  color: black;
 }
 
 /*добавление фоток в альбом(чекбокс фоток)*/
@@ -321,3 +342,46 @@ label img {
 .context-menu.left.top .context-sub-menu {
   transform: translate(-100%, -100%);
 }
+
+.album_title {
+  font-size: 3.5em
+}
+.album_name {
+  margin: 0;
+  font-size: 2.5em;
+  text-align: center;
+  text-color: black;
+}
+
+.zero_gallery{
+  display: flex; /* Используем flexbox для контейнера */
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center; /* Центрируем по горизонтали */
+  align-items: center; /* Центрируем по вертикали */
+}
+
+.zero_text {
+  font-size: 3.5em;
+}
+
+.zero_img {
+  width: 256px; /* Устанавливаем ширину изображения */
+  height: 256px;
+}
+
+.container {
+  flex: 0 0 auto;
+  width: 70px;
+  height: 150px;
+
+.button {
+  display: inline-block;
+  padding: 12px 12px 10px;
+  border: 0;
+  border-radius: 3px;
+  background: #bf4d28;
+  text-decoration: none;
+  transition: all 1.2s ease-in-out;
+/*кнопка скачки альбома*/
+

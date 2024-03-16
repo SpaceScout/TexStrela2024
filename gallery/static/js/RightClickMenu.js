@@ -136,8 +136,8 @@ document.querySelectorAll('.card')
         label: "Delete",
         action(opt) {
           const photoId = opt.photoId;
-          const csrfToken = opt.csrfToken;
-          console.log(photoId)
+          const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+          console.log(csrfToken)
           fetch(`/delete/${photoId}/`, {
             method: 'POST',
             headers: {
