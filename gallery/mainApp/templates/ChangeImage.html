@@ -1,12 +1,11 @@
 {% extends 'BaseGallery.html' %}
-{% load static %}
+
 
 {% block title %}ChangeImage{% endblock %}
 
 {% block content %}
 <!-- style="filter: brightness(50%);" -->
     <div style="display: inline-block; width: 70%; margin-top: 5%;">
-        <!-- <img id="image" src="{{photourl}}"  style="display: none; margin:auto;"> -->
         <div style=" width:40%; margin: auto; position: relative;">
             <div style="position: absolute; visibility: hidden; z-index: 1;" id="textOnImage">TEXT</div>
             <img id="imageforchanging" style="display: block; margin:auto" src="{{photourl}}"  alt="photo" width="100%" height="auto">
@@ -35,28 +34,13 @@
             <input id="rotation" oninput="changeRotation(this.value)" type="range" name="rotation" min="0" max="360" value="0" data-sizing="%"><span id="spanRotationValue" class="slider-value">0°<span>
         </div> 
         <!-- <button onclick="cropImage()">CROP</button> -->
-        <a id="goToCrop" href="crop_image/?photo={{photourl}}&id={{photoid}}">ОБРЕЗКА ИЗОБРАЖЕНИЯ</a>
+        <a id="goToCrop" href="crop_image/?photo={{photourl}}&id={{photoid}}">ОБРЕЗКА ИЗОБРАЖЕНИЯ</a><br>
+        <a id="goToAddText" href="add_text/?photo={{photourl}}&id={{photoid}}">ДОБАВЛЕНИЕ ТЕКСТА</a><br>
         <!-- <a href="save_image">{{photoid}}</a> -->
-        <div style="font-size: 16px;">ДОБАВИТЬ ТЕКСТ</div>
-        <div><input id="textOnImageValue" type="text"></div>
-        <button style="display: inline-block;" onclick="setTextVisibility()">ВСТАВИТЬ</button><br>
-        <button style="display: inline-block;" onclick="removeText()">УБРАТЬ</button>
-        <div class="sliders"><label for="textMoveOnX">Смещение по x:</label>
-            <input id="textMoveOnX" oninput="moveText()" type="range" name="rotation" min="0" max="100" value="0" data-sizing="%"><span id="spanMoveXValue" class="slider-value">0%</span>
-        </div>
-        <div class="sliders"><label for="textMoveOnY">Смещение по y:</label>
-            <input id="textMoveOnY" oninput="moveText()" type="range" name="rotation" min="0" max="100" value="0" data-sizing="%"><span id="spanMoveYValue" class="slider-value">0%</span>
-        </div>
+        
                 
         <button onclick="saveImage()">СОХРАНИТЬ</button>
                 
             </div>
             
-{% endblock %}
-
-{% block scripts %}
-    <script src="{% static 'js\changeImage.js' %}"></script>
-    <script src="{% static 'js\cropper.js' %}"></script>
-    <script src="{% static 'js\main.js' %}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }} /static/js/jquery-3.7.1.js"></script>
 {% endblock %}

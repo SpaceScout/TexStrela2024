@@ -12,7 +12,9 @@ urlpatterns = [
     re_path(r'^gallery/changeimage/$', views.change_image_view, name='user_change_image'),
     path('gallery/changeimage/save_image/', views.save_image),
     path('gallery/changeimage/crop_image/save_cropped_image/', views.save_cropped_image),
+    path('gallery/changeimage/add_text/save_added_text/', views.save_text_on_image),
     re_path(r'^gallery/changeimage/crop_image/$', views.crop_image),
+    re_path(r'^gallery/changeimage/add_text/$', views.add_text),
 
     path('delete/<int:file_id>/', views.delete_file, name="deleting"),
     path('download/<int:file_id>/', views.download_file_view, name="saving"),

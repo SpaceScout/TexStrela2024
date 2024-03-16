@@ -1,0 +1,46 @@
+{% extends 'BaseGallery.html' %}
+
+
+{% block title %}ChangeImage{% endblock %}
+
+{% block content %}
+<!-- style="filter: brightness(50%);" -->
+    <div style="display: inline-block; width: 70%; margin-top: 5%;">
+        <div style=" width:40%; margin: auto; position: relative;">
+            <div style="position: absolute; visibility: hidden; z-index: 1;" id="textOnImage">TEXT</div>
+            <img id="imageforchanging" style="display: block; margin:auto" src="{{photourl}}"  alt="photo" width="100%" height="auto">
+        </div>
+    </div>
+
+    <!-- <div id="image-box"><img id="image" src="{{photourl}}"></div> -->
+    <!-- МЕНЮ ИЗМЕНЕНИЯ КАРТИНКИ -->
+    <div style="height: 95%;
+                width: 25%;
+                background-color: white;
+                float: right;
+                border-radius: 10px;
+                text-align: center;">
+
+        <div id="aPhotoId">{{photoid}}</div>
+        
+        <!-- <div style="font-size: 16px;">ДОБАВИТЬ ТЕКСТ</div> -->
+        <div><input id="textOnImageValue" type="text" placeholder="ТЕКСТ"></div>
+        <div><input id="textOnImageColorValue" type="text" placeholder="ЦВЕТ"></div>
+        <div><input id="textOnImageSizeValue" type="text" placeholder="РАЗМЕР"></div>
+        <button style="display: inline-block; margin: 3%" onclick="setTextVisibility()">ВСТАВИТЬ</button>
+        <button style="display: inline-block;" onclick="removeText()">УБРАТЬ</button>
+        <div class="sliders"><label for="textMoveOnX">Смещение по x:</label>
+            <input id="textMoveOnX" oninput="moveText()" type="range" name="rotation" min="0" max="100" value="0" data-sizing="%"><span id="spanMoveXValue" class="slider-value">0%<span>
+            </div>
+            <div class="sliders"><label for="textMoveOnY">Смещение по y:</label>
+                <input id="textMoveOnY" oninput="moveText()" type="range" name="rotation" min="0" max="100" value="0" data-sizing="%"><span id="spanMoveYValue" class="slider-value">0%<span>
+                </div>
+        
+       
+        <button onclick="saveTextOnImage()">СОХРАНИТЬ ТЕКСТ НА КАРТИНКЕ</button>
+        
+
+            
+    </div>
+    
+{% endblock %}

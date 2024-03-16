@@ -1,5 +1,5 @@
 {% extends 'BaseGallery.html' %}
-{% load static %}
+
 
 {% block title %}ChangeImage{% endblock %}
 
@@ -26,7 +26,7 @@
         <input type="text" class="form-control" id="dataY" placeholder="y"> -->
         <div class="input-group input-group-sm">
             <span class="input-group-prepend">
-                <span class="input-group-text" for="dataX">X</span>
+              <span class="input-group-text" for="dataX">X</label>
             </span>
             <input type="text" class="form-control" id="dataX" placeholder="x">
             <span class="input-group-append">
@@ -35,7 +35,7 @@
         </div>
         <div class="input-group input-group-sm">
             <span class="input-group-prepend">
-                <span class="input-group-text" for="dataY">Y</span>
+              <span class="input-group-text" for="dataY">Y</label>
             </span>
             <input type="text" class="form-control" id="dataY" placeholder="y">
             <span class="input-group-append">
@@ -44,7 +44,7 @@
         </div>
         <div class="input-group input-group-sm">
             <span class="input-group-prepend">
-                <span class="input-group-text" for="dataWidth">Width</span>
+              <span class="input-group-text" for="dataWidth">Width</label>
             </span>
             <input type="text" class="form-control" id="dataWidth" placeholder="width">
             <span class="input-group-append">
@@ -53,21 +53,19 @@
         </div>
           <div class="input-group input-group-sm">
             <span class="input-group-prepend">
-                <span class="input-group-text" for="dataHeight">Height</span>
+              <span class="input-group-text" for="dataHeight">Height</label>
             </span>
             <input type="text" class="form-control" id="dataHeight" placeholder="height">
             <span class="input-group-append">
               <span class="input-group-text">px</span>
             </span>
         </div>
-            <button onclick="cropImage()">CROP</button>
-        </div>
-    
-{% endblock %}
+        
+       
+        <button onclick="cropImage()">CROP</button>
+        
 
-{% block scripts %}
-    <script src="{% static 'js\changeImage.js' %}"></script>
-    <script src="{% static 'js\cropper.js' %}"></script>
-    <script src="{% static 'js\main.js' %}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }} /static/js/jquery-3.7.1.js"></script>
+            
+    </div>
+    
 {% endblock %}
