@@ -1,13 +1,16 @@
 from django.urls import path, re_path
 from . import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.home_view, name="home"),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     path('gallery/', views.gallery_view, name="gallery"),
     path('albums/', views.albums_view, name="albums"),
     path('videos/', views.videos_view, name="videos"),
     path('albums/<int:album_id>/', views.album_view, name='album_files'),
+    path('show_image/<int:file_id>/', views.show_image, name='show_image'),
 
     re_path(r'^gallery/changeimage/$', views.change_image_view, name='user_change_image'),
     path('gallery/changeimage/save_image/', views.save_image),

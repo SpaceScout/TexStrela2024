@@ -1,6 +1,8 @@
 {% extends 'BaseGallery.html' %}
 {% load static %}
 
+{% block title %}Videos{% endblock %}
+
 {% block content %}
     {% csrf_token %}
     {% if videos %}
@@ -20,7 +22,7 @@
     {% else %}
         <div class="zero_gallery">
             <div>
-                <h2 class="zero_text">Ваше хранилище пусто</h2>
+                <h2 class="zero_text">Ваше хранилище пусто<i class="bi bi-emoji-frown"></i></h2>
             </div>
             <div>
                 <img class="zero_img" src="{% static 'img/box.png'%}">

@@ -42,7 +42,7 @@ body {
 .logo {
   float: left;
   display: block;
-  color: black;
+  color: #121113;
   text-align: center;
   padding: 25px 30px;
   text-align: center;
@@ -63,7 +63,11 @@ body {
 }
 
 .main-nav li {
-  margin-left: 25px;
+  display: flex;
+  align-items: center;
+  width: 250px;
+  height: 70px;
+  padding-left: 25px;
 }
 
 
@@ -73,6 +77,7 @@ body {
   font: 1.5em 'Source Sans Pro', Helvetica, Arial, sans-serif;
   text-align: left;
   transition: transform 0.5s ease;
+  text-decoration: none;
 }
 
 .main-nav a:hover {
@@ -106,6 +111,7 @@ main {
   height: calc(100vh - 100px); /* Рассчитываем высоту как 100% высоты видимой области минус высота верхнего меню */
   overflow: auto; /* прокрутка, если контент внутри main будет больше, чем доступное пространство */
   padding: 40px 40px;
+
 }
 
 .topnav {
@@ -120,10 +126,7 @@ main {
 .buttons-container {
   display: flex;
   align-items: center;
-}
-
-.buttons-container button {
-  margin-right: 10px; /* Регулируйте отступ между кнопками, как вам нужно */
+  margin-right: 20px;
 }
 
 /* Style the search box inside the navigation bar */
@@ -212,7 +215,7 @@ button.create-album {
   justify-content: center; /* Центрируем по горизонтали */
   align-items: center; /* Центрируем по вертикали */
   text-decoration: none;
-  color: black;
+  color: #121113;
 }
 
 /*добавление фоток в альбом(чекбокс фоток)*/
@@ -344,13 +347,14 @@ label img {
 }
 
 .album_title {
-  font-size: 3.5em
+  font-size: 3.5em;
+  color: #121113;
 }
 .album_name {
   margin: 0;
   font-size: 2.5em;
   text-align: center;
-  text-color: black;
+  text-color: #121113;
 }
 
 .zero_gallery{
@@ -374,14 +378,45 @@ label img {
   flex: 0 0 auto;
   width: 70px;
   height: 150px;
+}
 
-.button {
-  display: inline-block;
-  padding: 12px 12px 10px;
+.download_button {
+  padding: 7px 7px 6px;
   border: 0;
   border-radius: 3px;
-  background: #bf4d28;
   text-decoration: none;
-  transition: all 1.2s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+.download_button:hover {
+  color: #CC2936;
+}
+
+.logout_button {
+  color: #121113;
+  text-decoration: none;
+}
+
+.logout_button:hover {
+  color: #CC2936;
+}
+
+.bi-6x {
+  font-size: 3.5em;
+}
+
+.upload_button {
+  width: 203px;
+  height: 50px;
+  font-size: 1.5em;
+  text-align: center;
+  border: none;
+  background: #FCFFF7;
+  border-radius: 7px;
+  -webkit-box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
+  -moz-box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
+  box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
+}
+
 /*кнопка скачки альбома*/
 

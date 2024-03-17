@@ -1,16 +1,16 @@
 {% extends 'BaseGallery.html' %}
 {% load static %}
 
-{% block title %}Gallery{% endblock %}
+{% block title %} {{ album.title }} {% endblock %}
 
 {% block content %}
     <div class="album_title_div">
-        <h2 class="album_title">{{ album.title }}<a href="{% url 'download_album' album.id %}" class="button"><i class="bi bi-download"></i></a></h2>
+        <h2 class="album_title">{{ album.title }} <a href="{% url 'download_album' album.id %}" class="download_button"><i class="bi bi-cloud-download"></i></a></h2>
     </div>
     {% if not member %}
         {% csrf_token %}
-        <!--    bootstrap element для открывающего списка. Там открываются участники альбома(кроме админа) и поле для добавления по email в альбом-->
-        <!--    у простого участника это скрыто ес чо-->
+        <!--bootstrap element для открывающего списка. Там открываются участники альбома(кроме админа) и поле для добавления по email в альбом-->
+        <!--у простого участника это скрыто ес чо-->
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#AddOneToAlbum" aria-expanded="false" aria-controls="collapseExample">
             Участники
         </button>
@@ -43,7 +43,7 @@
     {% endif %}
     <a href="{% url 'photo_add' album_id=album.id %}"> Добавить файлы</a>
 
-  <h3>Фотографии:</h3>
+    <h3>Фотографии:</h3>
     {% for file in photos %}
         <!--    bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
         <div class="card" style="width: 18rem;" data-photo-id="{{ file.id }}">
@@ -55,9 +55,9 @@
         </div>
     {% endfor %}
 
-  <h3>Видео:</h3>
-   {% for video in videos %}
-        <!--    bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
+    <h3>Видео:</h3>
+    {% for video in videos %}
+        <!--bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
         <div class="card" style="width: 18rem;" data-photo-id="{{ video.id }}">
             <video controls width="250" height="380">
                     <source src="{{ video.file.url }}" type="video/mp4">
@@ -70,6 +70,7 @@
         </div>
     {% endfor %}
 {% endblock %}
+
 
 {% block scripts %}
     <script src="{% static 'js/RemoveUserFromAlbum.js' %}"></script>

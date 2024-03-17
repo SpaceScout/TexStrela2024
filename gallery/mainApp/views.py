@@ -10,9 +10,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from PIL import Image, ImageEnhance, ImageDraw, ImageFont
 import io
 import zipfile
+import cv2
 
 from mainApp.forms import CustomUserCreationForm, MultiFileForm, CustomUserAuthForm, CreateAlbum
 from mainApp.models import Files, Album, CustomUser, Tag
+
+
+def convert_dng_to_jpeg(dng_file_path):
+    image = cv2.imread(dng_file_path, cv2.IMREAD_UNCHANGED)
+    success, jpeg_data = cv2.imencode(".jpg", image)
+    return jpeg_data.tobytes()
 
 
 def home_view(request):
@@ -67,12 +74,28 @@ def gallery_view(request):
                 Q(user=request.user, file__endswith='.jpg') |
                 Q(user=request.user, file__endswith='.jpeg') |
                 Q(user=request.user, file__endswith='.png') |
-                Q(user=request.user, file__endswith='.row') |
+                Q(user=request.user, file__endswith='.raw') |
                 Q(user=request.user, file__endswith='.dng')
             )
             return render(request, 'Gallery.html', {'photos': photos, 'form': form})
     except ValueError:
         return redirect('gallery')
+
+
+def show_image(request, file_id):
+    try:
+        file = Files.objects.get(id=file_id)
+        image_data = file.file.read()
+
+        # Преобразование .dng/.raw в JPEG
+        image = Image.open(io.BytesIO(image_data))
+        jpeg_data = io.BytesIO()
+        image.save(jpeg_data, format='JPEG')
+
+        # Возвращаем JPEG изображение в HttpResponse
+        return HttpResponse(jpeg_data.getvalue(), content_type='image/jpeg')
+    except Files.DoesNotExist:
+        return HttpResponse(status=404, content="File not found")
 
 
 @login_required

@@ -7,10 +7,15 @@
     {% csrf_token %}
     {% if photos %}
         {% for file in photos %}
-            <!--bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
             <div class="card" style="width: 18rem;" data-photo-id="{{ file.id }}">
                 <a target="_blank" href="changeimage/?photo={{file.file.url}}&id={{file.id}}">
-                    <img src="{{file.file.url}}" class="card-img-top" alt="photo">
+                    {% if file.file.name|lower|slice:"-4:" == '.dng' or file.file.name|lower|slice:"-4:" == '.raw' %}
+                        <!-- Отображение .dng/raw с помощью альтернативного JPEG изображения -->
+                        <img src="{% url 'show_image' file.id %}" class="card-img-top" alt="{{ file.title }}">
+                    {% else %}
+                        <!-- Отображение дефолтных фоток -->
+                        <img src="{{ file.file.url }}" class="card-img-top" alt="{{ file.title }}">
+                    {% endif %}
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ file.title }}</h5>
@@ -21,7 +26,7 @@
     {% else %}
         <div class="zero_gallery">
             <div>
-                <h2 class="zero_text">Ваше хранилище пусто</h2>
+                <h2 class="zero_text">Ваше хранилище пусто<i class="bi bi-emoji-frown"></i></h2>
             </div>
             <div>
                 <img class="zero_img" src="{% static 'img/box.png'%}">

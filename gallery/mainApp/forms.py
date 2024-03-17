@@ -52,8 +52,14 @@ class CustomUserAuthForm(AuthenticationForm):
         self.fields = {key: self.fields[key] for key in self.field_order}
 
 
-class MultipleFileInput(forms.ClearableFileInput):
+class MultipleFileInput(forms.FileInput):
     allow_multiple_selected = True
+
+    def __init__(self, attrs=None):
+        default_attrs = {'onchange': 'this.form.submit()', 'style': 'color:transparent;', 'id': 'input_upload'}
+        if attrs:
+            default_attrs.update(attrs)
+        super().__init__(default_attrs)
 
 
 class MultipleFileField(forms.FileField):
@@ -72,11 +78,10 @@ class MultipleFileField(forms.FileField):
 
 class MultiFileForm(forms.Form):
     files = MultipleFileField(validators=[
-        FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mov'])])
+        FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'mp4', 'avi', 'mov', 'dng', 'raw'])], label=False,)
 
 
 class CreateAlbum(forms.ModelForm):
-
     title = forms.CharField(
         label='',
         widget=forms.TextInput(attrs={'autofocus': True, 'placeholder': 'Новый альбом'})

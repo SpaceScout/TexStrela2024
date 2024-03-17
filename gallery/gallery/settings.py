@@ -76,15 +76,14 @@ WSGI_APPLICATION = 'gallery.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'tex-strela',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tex-strela',
         'USER': 'root',
-        'PASSWORD': '',    # Not used with sqlite3.
-        'HOST': '',  # Используйте это значение для подключения к MySQL на том же хосте
+        'PASSWORD': '',
+        'HOST': '',
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -126,3 +125,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'home'
+LOGIN_REDIRECT_URL = 'gallery'
