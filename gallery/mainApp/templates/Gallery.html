@@ -8,20 +8,12 @@
     {% if photos %}
         {% for file in photos %}
             <div class="card" style="width: 18rem;" data-photo-id="{{ file.id }}">
-                <a target="_blank" href="changeimage/?photo={{file.file.url}}&id={{file.id}}">
-                    {% if file.file.name|lower|slice:"-4:" == '.dng' or file.file.name|lower|slice:"-4:" == '.raw' %}
-                        <!-- Отображение .dng/raw с помощью альтернативного JPEG изображения -->
-                        <img src="{% url 'show_image' file.id %}" class="card-img-top" alt="{{ file.title }}">
-                    {% else %}
-                        <!-- Отображение дефолтных фоток -->
-                        <img src="{{ file.file.url }}" class="card-img-top" alt="{{ file.title }}">
-                    {% endif %}
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">{{ file.title }}</h5>
-                    <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
-                </div>
+            <img src="{{file.file.url}}" class="card-img-top" alt="photo">
+            <div class="card-body">
+                <h5 class="card-title">{{ file.title }}</h5>
+                <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
             </div>
+        </div>
         {% endfor %}
     {% else %}
         <div class="zero_gallery">

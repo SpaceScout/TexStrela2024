@@ -411,11 +411,20 @@ label img {
   font-size: 1.5em;
   text-align: center;
   border: none;
-  background: #FCFFF7;
+  background: white;
   border-radius: 7px;
   -webkit-box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
   -moz-box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
   box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
+}
+
+.add_files_button {
+  width: 230px;
+  height: 50px;
+  font-size: 1em;
+  text-align: center;
+  background: white;
+  border-radius: 7px;
 }
 
 /*кнопка скачки альбома*/

@@ -119,21 +119,24 @@ def albums_view(request):
 
 @login_required
 def album_view(request, album_id):
-    photos = []
-    videos = []
     all_user_emails = CustomUser.objects.values_list('email', flat=True)
     user = request.user
 
     album = get_object_or_404(Album, pk=album_id)
     allowed_users = album.allowed_users.all()
 
-    files = album.files.all()
-    for file in files:
-        file_name = file.file.name.lower()
-        if file_name.endswith(('.jpg', '.jpeg', '.png', '.gif', '.dng', '.row')):
-            photos.append(file)
-        elif file_name.endswith(('.mp4', '.avi', '.mov')):
-            videos.append(file)
+    photos = Files.objects.filter(
+        Q(user=request.user, file__endswith='.jpg', albums_files__id=album_id) |
+        Q(user=request.user, file__endswith='.jpeg', albums_files__id=album_id) |
+        Q(user=request.user, file__endswith='.png', albums_files__id=album_id) |
+        Q(user=request.user, file__endswith='.raw', albums_files__id=album_id) |
+        Q(user=request.user, file__endswith='.dng', albums_files__id=album_id)
+    )
+    videos = Files.objects.filter(
+        Q(user=request.user, file__endswith='.mp4', albums_files__id=album_id) |
+        Q(user=request.user, file__endswith='.avi', albums_files__id=album_id) |
+        Q(user=request.user, file__endswith='.mov', albums_files__id=album_id)
+    )
     if request.user == album.user:
         if allowed_users:
             return render(request, 'SomeAlbum.html',
@@ -172,7 +175,7 @@ def add_files_to_album(request, album_id):
                 Q(user=request.user, file__endswith='.jpg') |
                 Q(user=request.user, file__endswith='.jpeg') |
                 Q(user=request.user, file__endswith='.png') |
-                Q(user=request.user, file__endswith='.row') |
+                Q(user=request.user, file__endswith='.raw') |
                 Q(user=request.user, file__endswith='.dng')
             )
             videos = Files.objects.filter(
@@ -180,6 +183,7 @@ def add_files_to_album(request, album_id):
                 Q(user=request.user, file__endswith='.avi') |
                 Q(user=request.user, file__endswith='.mov')
             )
+            print(photos)
             return render(request, 'ChooseFilesToAdd.html', {'photos': photos, 'videos': videos})
     except Exception as e:
         return redirect('albums')

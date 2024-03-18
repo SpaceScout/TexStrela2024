@@ -4,21 +4,28 @@
 
 {% block content %}
   <h1>Добавить файлы в альбом</h1>
-  <h2>Photos</h2>
+  <h2>Photos:</h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <ul>
       {% for file in photos %}
         <li>
-          <input type="checkbox" name="selected_photos"  id="myCheckbox{{ file.id }}" value="{{ file.id }}">
-          <label for="myCheckbox{{ file.id }}">
-            <img src="{{ file.file.url }}" alt="photo" width="250" height="380">
-          </label>
+          {% if file.file.name|lower|slice:"-4:" == '.dng' or file.file.name|lower|slice:"-4:" == '.raw' %}
+            <input type="checkbox" name="selected_photos"  id="myCheckbox{{ file.id }}" value="{{ file.id }}">
+            <label for="myCheckbox{{ file.id }}">
+              <img src="{% url 'show_image' file.id %}" alt="{{ file.title }}" width="250" height="380">
+            </label>
+          {% else %}
+            <input type="checkbox" name="selected_photos"  id="myCheckbox{{ file.id }}" value="{{ file.id }}">
+            <label for="myCheckbox{{ file.id }}">
+              <img src="{{ file.file.url }}" alt="{{ file.title }}" width="250" height="380">
+            </label>
+          {% endif %}
         </li>
       {% endfor %}
     </ul>
 
-    <h2>Videos</h2>
+    <h2>Videos:</h2>
     <ul>
       {% for file in videos %}
         <li>
@@ -34,6 +41,6 @@
       {% endfor %}
     </ul>
 
-    <input type="submit" value="Add Selected Files to Album">
+    <input type="submit" class="add_files_button" value="Add Selected Files to Album">
   </form>
 {% endblock %}

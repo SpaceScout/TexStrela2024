@@ -35,7 +35,6 @@
         {% for album in albums %}
             <a  class="album" href="{% url 'album_files' album.id %}">
                 <h2 class="album_name">{{ album.title }}</h2>
-                <a class="album_download" href="{% url 'download_album' album.id %}">Скачать</a>
             </a>
         {% endfor %}
     </div>
@@ -45,7 +44,6 @@
         {% for shared_album in shared_albums %}
         <a class="album" href="{% url 'album_files' shared_album.id %}">
             <h2 class="album_name">{{ shared_album.title }}</h2>
-            <a class="album_download" href="{% url 'download_album' shared_album.id %}">Скачать</a>
         </a>
       {% endfor %}
     </div>
