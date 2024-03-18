@@ -10,16 +10,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from PIL import Image, ImageEnhance, ImageDraw, ImageFont
 import io
 import zipfile
-import cv2
 
 from mainApp.forms import CustomUserCreationForm, MultiFileForm, CustomUserAuthForm, CreateAlbum
 from mainApp.models import Files, Album, CustomUser, Tag
-
-
-def convert_dng_to_jpeg(dng_file_path):
-    image = cv2.imread(dng_file_path, cv2.IMREAD_UNCHANGED)
-    success, jpeg_data = cv2.imencode(".jpg", image)
-    return jpeg_data.tobytes()
 
 
 def home_view(request):
@@ -28,8 +21,6 @@ def home_view(request):
     show_registration_form = False
     show_login_form = False
     if request.method == 'POST':
-        print("GOT POST AUTH")
-        print(request.POST)
         if 'register_form' in request.POST:
             register_form = CustomUserCreationForm(request.POST)
             if register_form.is_valid():
@@ -61,10 +52,18 @@ def home_view(request):
 def gallery_view(request):
     try:
         if request.method == 'POST':
-            print(request.POST)
             form = MultiFileForm(request.POST, request.FILES)
             if form.is_valid():
+                from ultralytics import YOLO
+                model = YOLO("yolov8m.pt")
+
                 for file in request.FILES.getlist('files'):
+                    image = Image.open(file)
+                    results = model.predict(image)
+                    result = results[0]
+                    for box in result.boxes:
+                        class_id = result.names[box.cls[0].item()]
+                        print(class_id)
                     title = file.name
                     Files.objects.create(user=request.user, file=file, title=title)
             return redirect('gallery')
@@ -87,7 +86,7 @@ def show_image(request, file_id):
         file = Files.objects.get(id=file_id)
         image_data = file.file.read()
 
-        # Преобразование .dng/.raw в JPEG
+        # Преобразование .dng/ в JPEG
         image = Image.open(io.BytesIO(image_data))
         jpeg_data = io.BytesIO()
         image.save(jpeg_data, format='JPEG')
@@ -102,7 +101,6 @@ def show_image(request, file_id):
 def albums_view(request):
     try:
         if request.method == 'POST':
-            print(request.POST)
             album_form = CreateAlbum(request.POST)
             if album_form.is_valid():
                 album = Album.objects.create(user=request.user, title=album_form.cleaned_data['title'])
@@ -163,9 +161,7 @@ def add_files_to_album(request, album_id):
             selected_videos_ids = request.POST.getlist('selected_videos')
             for video_id in selected_videos_ids:
                 video = get_object_or_404(Files, id=video_id, user=request.user)
-                print(video)
                 new_video = album.files.add(video)
-                print(new_video)
             for photo_id in selected_photos_ids:
                 photo = get_object_or_404(Files, id=photo_id, user=request.user)
                 album.files.add(photo)
@@ -183,7 +179,6 @@ def add_files_to_album(request, album_id):
                 Q(user=request.user, file__endswith='.avi') |
                 Q(user=request.user, file__endswith='.mov')
             )
-            print(photos)
             return render(request, 'ChooseFilesToAdd.html', {'photos': photos, 'videos': videos})
     except Exception as e:
         return redirect('albums')
@@ -193,7 +188,6 @@ def add_files_to_album(request, album_id):
 def videos_view(request):
     try:
         if request.method == 'POST':
-            print(request.POST)
             form = MultiFileForm(request.POST, request.FILES)
             if form.is_valid():
                 for file in request.FILES.getlist('files'):
@@ -269,7 +263,6 @@ def add_user_to_album(request):
     if request.user == album.user:
         user_to_add = get_object_or_404(CustomUser, email=user_email)
         album.allowed_users.add(user_to_add)
-        print('added')
         referer = request.META.get('HTTP_REFERER')
         if referer:
             return redirect(referer)
@@ -288,7 +281,6 @@ def delete_user_from_album(request):
     if request.user == album.user:
         user_to_remove = get_object_or_404(CustomUser, email=user_email)
         album.allowed_users.remove(user_to_remove)
-        print('deleted')
         referer = request.META.get('HTTP_REFERER')
         if referer:
             return redirect(referer)
@@ -304,13 +296,11 @@ def add_tag(request):
     print("WE ARE ADDING NOW")
     new_tag = request.GET.get('tag')
     file_id = request.GET.get('file_id')
-    print(new_tag, file_id)
 
     file = get_object_or_404(Files, pk=file_id)
     if request.user == file.user:
         tag = Tag.objects.create(name=new_tag)
         file.tags.add(tag)
-        print('added')
         referer = request.META.get('HTTP_REFERER')
         if referer:
             return redirect(referer)
@@ -431,8 +421,5 @@ def save_image(request):
         myModel.file.save(f"{photo[photo.rindex('/') + 1:photo.rindex('.'):]}.jpg", ContentFile(rotated_photo.getvalue()))
         myModel.save()
 
-        print("1!!!!", myModel.file.path)
-
-        print(bValue, cValue, rValue, photo, id)
         path = myModel.file.path
         return HttpResponse(json.dumps({'filepath': path[path.index("media") - 1::]}), content_type="application/json")
