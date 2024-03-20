@@ -358,12 +358,6 @@ label img {
   height: 256px;
 }
 
-.container {
-  flex: 0 0 auto;
-  width: 70px;
-  height: 150px;
-}
-
 .download_button {
   padding: 7px 7px 6px;
   border: 0;
