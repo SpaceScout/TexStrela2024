@@ -93,7 +93,9 @@
     </main>
 </body>
 
-<script src="{% static 'js/RightClickMenu.js' %}"></script>
+{% if not member %}
+    <script src="{% static 'js/RightClickMenu.js' %}"></script>
+{% endif %}
 
 {% block scripts %}{% endblock %}
 </html>

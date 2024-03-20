@@ -18,6 +18,14 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ file.title }}</h5>
                     <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
+                    {% if file.tags.all %}
+                        <p>Теги:
+                            {% for tag in file.tags.all %}
+                                {{ tag.name }}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

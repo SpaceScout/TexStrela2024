@@ -61,11 +61,18 @@ def gallery_view(request):
                     image = Image.open(file)
                     results = model.predict(image)
                     result = results[0]
+                    tags = []
                     for box in result.boxes:
                         class_id = result.names[box.cls[0].item()]
+                        tags.append(class_id)
                         print(class_id)
                     title = file.name
-                    Files.objects.create(user=request.user, file=file, title=title)
+                    new_file = Files.objects.create(user=request.user, file=file, title=title)
+                    for tag in tags:
+                        if not new_file.tags.filter(name=tag).exists():
+                            new_tag, created = Tag.objects.get_or_create(name=tag)
+                            new_file.tags.add(new_tag)
+                    new_file.save()
             return redirect('gallery')
         else:
             form = MultiFileForm()
@@ -103,19 +110,19 @@ def albums_view(request):
         if request.method == 'POST':
             album_form = CreateAlbum(request.POST)
             if album_form.is_valid():
-                album = Album.objects.create(user=request.user, title=album_form.cleaned_data['title'])
+                album = Album.objects.create(user=request.user, title=album_form.cleaned_data['title'], open=album_form.cleaned_data['open'])
                 return redirect('photo_add', album_id=album.id)
         else:
             form = MultiFileForm()
             album_form = CreateAlbum()
             shared_albums = Album.objects.filter(allowed_users__id=request.user.id)
             albums = Album.objects.filter(user_id=request.user.id)
-            return render(request, 'Albums.html', {'shared_albums': shared_albums,'albums': albums, 'form': form, 'album_form': album_form})
+            return render(request, 'Albums.html',
+                          {'shared_albums': shared_albums, 'albums': albums, 'form': form, 'album_form': album_form})
     except ValueError:
         return redirect('albums')
 
 
-@login_required
 def album_view(request, album_id):
     all_user_emails = CustomUser.objects.values_list('email', flat=True)
     user = request.user
@@ -124,18 +131,21 @@ def album_view(request, album_id):
     allowed_users = album.allowed_users.all()
 
     photos = Files.objects.filter(
-        Q(user=request.user, file__endswith='.jpg', albums_files__id=album_id) |
-        Q(user=request.user, file__endswith='.jpeg', albums_files__id=album_id) |
-        Q(user=request.user, file__endswith='.png', albums_files__id=album_id) |
-        Q(user=request.user, file__endswith='.raw', albums_files__id=album_id) |
-        Q(user=request.user, file__endswith='.dng', albums_files__id=album_id)
+        Q(file__endswith='.jpg', albums_files__id=album_id) |
+        Q(file__endswith='.jpeg', albums_files__id=album_id) |
+        Q(file__endswith='.png', albums_files__id=album_id) |
+        Q(file__endswith='.raw', albums_files__id=album_id) |
+        Q(file__endswith='.dng', albums_files__id=album_id)
     )
     videos = Files.objects.filter(
-        Q(user=request.user, file__endswith='.mp4', albums_files__id=album_id) |
-        Q(user=request.user, file__endswith='.avi', albums_files__id=album_id) |
-        Q(user=request.user, file__endswith='.mov', albums_files__id=album_id)
+        Q(file__endswith='.mp4', albums_files__id=album_id) |
+        Q(file__endswith='.avi', albums_files__id=album_id) |
+        Q(file__endswith='.mov', albums_files__id=album_id)
     )
-    if request.user == album.user:
+    if album.open:
+        return render(request, 'SomeAlbum.html',
+                      {'member': True, 'user': user, 'album': album, 'photos': photos, 'videos': videos})
+    elif request.user == album.user:
         if allowed_users:
             return render(request, 'SomeAlbum.html',
                           {'allowed_users': allowed_users, 'user': user, 'album': album, 'photos': photos,
@@ -218,6 +228,7 @@ def delete_file(request, file_id):
     except Exception as e:
         print(f"Error deleting file: {e}")
         return JsonResponse({'error': 'Failed to delete file'}, status=500)
+
 
 @login_required
 def download_file_view(request, file_id):
@@ -310,7 +321,7 @@ def add_tag(request):
         raise Http404("Auth error")
 
 
-#ТАМАРЕН КОД СНИЗУ
+# ТАМАРЕН КОД СНИЗУ
 @login_required
 def change_image_view(request):
     if request.method == 'GET':
@@ -418,7 +429,8 @@ def save_image(request):
 
         image.save(rotated_photo, 'JPEG')
 
-        myModel.file.save(f"{photo[photo.rindex('/') + 1:photo.rindex('.'):]}.jpg", ContentFile(rotated_photo.getvalue()))
+        myModel.file.save(f"{photo[photo.rindex('/') + 1:photo.rindex('.'):]}.jpg",
+                          ContentFile(rotated_photo.getvalue()))
         myModel.save()
 
         path = myModel.file.path

@@ -87,6 +87,12 @@ class CreateAlbum(forms.ModelForm):
         widget=forms.TextInput(attrs={'autofocus': True, 'placeholder': 'Новый альбом'})
     )
 
+    open = forms.BooleanField(
+        label='Открыть альбом',
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
     class Meta:
         model = Album
-        fields = ['title', ]
+        fields = ['title', 'open']

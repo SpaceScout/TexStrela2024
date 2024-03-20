@@ -53,6 +53,7 @@ class Album(models.Model):
     title = models.CharField(max_length=255)
     allowed_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='allowed_albums', blank=True)
     files = models.ManyToManyField(Files, related_name='albums_files', blank=True, unique=False)
+    open = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.email}'s Album: {self.title}"

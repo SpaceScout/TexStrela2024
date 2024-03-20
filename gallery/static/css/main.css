@@ -107,9 +107,9 @@ body {
 main {
   background: #F5F5F5;
   border-radius: 15px;
-  margin-left: 16em; /* Ширина вашего вертикального меню (headernav) */
-  height: calc(100vh - 100px); /* Рассчитываем высоту как 100% высоты видимой области минус высота верхнего меню */
-  overflow: auto; /* прокрутка, если контент внутри main будет больше, чем доступное пространство */
+  margin-left: 16em;
+  height: calc(100vh - 100px);
+  overflow: auto;
   padding: 40px 40px;
 
 }
@@ -425,5 +425,9 @@ label img {
   text-align: center;
   background: white;
   border-radius: 7px;
+}
+
+.card {
+  display: inline-block;
 }
 
