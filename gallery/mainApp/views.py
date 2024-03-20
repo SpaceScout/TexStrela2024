@@ -7,6 +7,7 @@ from django.core.files.base import ContentFile
 from django.db.models import Q
 from django.http import Http404, JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.files.images import get_image_dimensions
 from PIL import Image, ImageEnhance, ImageDraw, ImageFont
 import io
 import zipfile
@@ -48,6 +49,19 @@ def home_view(request):
                                          'show_login_form': show_login_form})
 
 
+def is_image(file):
+    try:
+        # Пытаемся получить размеры изображения
+        width, height = get_image_dimensions(file)
+        if not width or not height:
+            # Если не получается, это не изображение
+            return False
+        return True
+    except:
+        # В случае ошибки тоже считаем, что это не изображение
+        return False
+
+
 @login_required
 def gallery_view(request):
     try:
@@ -58,21 +72,25 @@ def gallery_view(request):
                 model = YOLO("yolov8m.pt")
 
                 for file in request.FILES.getlist('files'):
-                    image = Image.open(file)
-                    results = model.predict(image)
-                    result = results[0]
-                    tags = []
-                    for box in result.boxes:
-                        class_id = result.names[box.cls[0].item()]
-                        tags.append(class_id)
-                        print(class_id)
-                    title = file.name
-                    new_file = Files.objects.create(user=request.user, file=file, title=title)
-                    for tag in tags:
-                        if not new_file.tags.filter(name=tag).exists():
-                            new_tag, created = Tag.objects.get_or_create(name=tag)
-                            new_file.tags.add(new_tag)
-                    new_file.save()
+                    if (is_image(file)):
+                        image = Image.open(file)
+                        results = model.predict(image)
+                        result = results[0]
+                        tags = []
+                        for box in result.boxes:
+                            class_id = result.names[box.cls[0].item()]
+                            tags.append(class_id)
+                            print(class_id)
+                        title = file.name
+                        new_file = Files.objects.create(user=request.user, file=file, title=title)
+                        for tag in tags:
+                            if not new_file.tags.filter(name=tag).exists():
+                                new_tag, created = Tag.objects.get_or_create(name=tag)
+                                new_file.tags.add(new_tag)
+                        new_file.save()
+                    else:
+                        new_file = Files.objects.create(user=request.user, file=file, title=file.name)
+                        new_file.save()
             return redirect('gallery')
         else:
             form = MultiFileForm()
