@@ -1,59 +1,261 @@
-{% extends 'base.html' %}
-
-{% block content %}
-    <!--Использовал bootstrap popup для всплывающих окон-->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#RegisterModal">
-    Регистрация
+{% extends 'base.html' %} {% block content %}
+<div class="header">
+  <h1 class="logo">
+    <a href="#">Sharedphotos</a>
+  </h1>
+  <div class="button-group">
+    <button
+      class="enter"
+      href="enterModal"
+      onclick="setDisplay('enter modal', block); setDisplay('background-dark', block)"
+    >
+      Войти
     </button>
+    <button
+      class="registration"
+      href="registrationModal"
+      onclick="setDisplay('registration modal', block); setDisplay('background-dark', block)"
+    >
+      Регистрация
+    </button>
+  </div>
+</div>
+<div
+  class="background-dark"
+  id="background-dark"
+  onclick="setDisplay('enter modal', none); setDisplay('background-dark', none)"
+></div>
+<h1 class="center-text">Делитесь фото и видео <br />Находите новые идеи</h1>
+<div class="grid-container">
+  <div class="grid-element">
+    <img
+      alt=""
+      class="grid-element"
+      src="../../static/img/stephen-rheeder-hRwGUu82dsg-unsplash%201.png"
+    />
+    <img
+      alt=""
+      class="grid-element"
+      src="../../static/img/christine-kozak-UQZDnV6zvdg-unsplash%201.png"
+    />
+  </div>
+  <div class="grid-element">
+    <img
+      alt=""
+      class="grid-element"
+      src="../../static/img/howen-81s4ryYuIh4-unsplash%201.png"
+    />
+    <img
+      alt=""
+      class="grid-element"
+      src="../../static/img/mia-moessinger-ULgH86OdnpA-unsplash%201.png"
+    />
+  </div>
 
-    <form method="post" name="register_form">
-    {% csrf_token %}
-      <div class="modal fade" id="RegisterModal" tabindex="-1" role="dialog" aria-labelledby="RegisterModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="RegisterModalLabel">Registration</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              {{ registration_form.as_p }}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="register_form">Register</button>
+  <img
+    alt=""
+    class="grid-element"
+    src="../../static/img/dejan-zakic-d2T9fqXjY-A-unsplash%201.png"
+  />
+  <img
+    alt=""
+    class="grid-element"
+    src="../../static/img/miles-chang-yuc-xzP0LPA-unsplash%201.png"
+  />
+  <img
+    alt=""
+    class="grid-element"
+    src="../../static/img/bianca-maria-xBrJa7-WSqI-unsplash%201.png"
+  />
+
+  <div class="grid-element">
+    <img
+      alt=""
+      class="grid-element"
+      src="../../static/img/mykyta-kravcenko-FzufKxNyGjA-unsplash%201.png"
+    /><img
+      alt=""
+      class="grid-element"
+      src="../../static/img/bao-menglong-24CZtLfxcXs-unsplash%201.png"
+    />
+  </div>
+  <div class="grid-element">
+    <img
+      alt=""
+      class="grid-element"
+      src="../../static/img/adrian-balasoiu-KN4N4XrBE1g-unsplash%201.png"
+    />
+    <img
+      alt=""
+      class="grid-element"
+      src="../../static/img/wasa-crispbread-lcSfW7qkA-E-unsplash%201.png"
+    />
+  </div>
+</div>
+
+<div class="enter modal" id="enter modal">
+  <div class="enter modal-content">
+    <img
+      alt=""
+      class="close-button"
+      onclick="setDisplay('enter modal', none); setDisplay('background-dark', none)"
+      src="../../static/svg/exit.svg"
+      width="19px"
+    />
+    <div class="container">
+      <h2 class="welcome">
+        Добро пожаловать в
+        <h2 class="logo-h2">SharedPhotos</h2>
+      </h2>
+      <form method="post" name="login_form">
+        {% csrf_token %}
+        <div class="inputs">
+          <input name="email" placeholder="Электронная почта" type="email" />
+          <div class="password">
+            <input
+              name="password"
+              class="password-input"
+              id="password"
+              placeholder="Пароль"
+              type="password"
+            />
+            <div>
+              <img
+                alt=""
+                class="opened"
+                id="opened eye"
+                onclick="setVisibility('closed eye', 'visible'); setVisibility('opened eye', 'hidden');document.getElementById('password').type = 'password'"
+                src="../../static/svg/eye.svg"
+              />
+              <img
+                alt=""
+                class="hidden"
+                id="closed eye"
+                onclick="setVisibility('opened eye', 'visible'); setVisibility('closed eye', 'hidden');document.getElementById('password').type = 'text'"
+                src="../../static/svg/hidden.svg"
+              />
             </div>
           </div>
         </div>
-      </div>
-    </form>
+        <button class="enter" name="login_form" type="submit">Войти</button>
+      </form>
 
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#LoginModal">
-    Авторизация
-    </button>
-    <form method="post" name="login_form">
-      {% csrf_token %}
-      <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="LoginModalLabel">Auth</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              {{ login_form.as_p }}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="login_form">Sign in</button>
+      <p class="agreements">
+        Продолжая, вы соглашаетесь с положениями основных документов
+        SharedPhotos.<br />
+        Это
+        <span
+          style="
+            font-family:
+              Montserrat Black,
+              sans-serif;
+            font-weight: bold;
+          "
+          >Условия предоставления услуг</span
+        >
+        и
+        <span
+          style="
+            font-family:
+              Montserrat Black,
+              sans-serif;
+            font-weight: bold;
+          "
+          >Политика конфиденциальности</span
+        >
+        . <br />А также подтверждаете, что прочли их.
+      </p>
+      <div class="line"></div>
+      <p class="not-registered">
+        Еще не зарегистрировались в SharedPhotos?
+        <a href="">Зарегистрироваться</a>
+      </p>
+    </div>
+  </div>
+</div>
+<div class="registration modal" id="registration modal">
+  <div class="registration modal-content">
+    <img
+      alt=""
+      class="close-button"
+      onclick="setDisplay('registration modal', none); setDisplay('background-dark', none)"
+      src="../../static/svg/exit.svg"
+      width="19px"
+    />
+    <div class="container">
+      <h2 class="welcome">
+        Добро пожаловать в
+        <h2 class="logo-h2">SharedPhotos</h2>
+      </h2>
+      <form method="post" name="register_form">
+        {% csrf_token %}
+        <div class="inputs">
+          <input name="email" placeholder="Электронная почта" type="email" />
+          <div class="password">
+            <input
+              name="password1"
+              class="password-input"
+              id="registration password"
+              placeholder="Пароль"
+              type="password"
+            />
+            <div>
+              <img
+                alt=""
+                class="opened"
+                id="registration opened eye"
+                onclick="setVisibility('registration closed eye', 'visible'); setVisibility('registration opened eye', 'hidden');document.getElementById('registration password').type = 'password'"
+                src="../../static/svg/eye.svg"
+              />
+              <img
+                alt=""
+                class="hidden"
+                id="registration closed eye"
+                onclick="setVisibility('registration opened eye', 'visible'); setVisibility('registration closed eye', 'hidden');document.getElementById('registration password').type = 'text'"
+                src="../../static/svg/hidden.svg"
+              />
             </div>
           </div>
+          <button class="enter" name="register_form" type="submit">
+            Зарегистрироваться
+          </button>
         </div>
-      </div>
-     </form>
+      </form>
+
+      <p class="agreements">
+        Продолжая, вы соглашаетесь с положениями основных документов
+        SharedPhotos.<br />
+        Это
+        <span
+          style="
+            font-family:
+              Montserrat Black,
+              sans-serif;
+            font-weight: bold;
+          "
+          >Условия предоставления услуг</span
+        >
+        и
+        <span
+          style="
+            font-family:
+              Montserrat Black,
+              sans-serif;
+            font-weight: bold;
+          "
+          >Политика конфиденциальности</span
+        >
+        . <br />А также подтверждаете, что прочли их.
+      </p>
+      <div class="line"></div>
+      <p class="not-registered">
+        Уже зарегистрировались в SharedPhotos?
+        <a href="">Войти</a>
+      </p>
+    </div>
+  </div>
+</div>
+<div class="bottom-gradient"></div>
 
 <script>
     {% if show_registration_form %}
@@ -76,5 +278,18 @@
             $(this).find('form')[0].reset();
         });
     });
+</script>
+
+<script>
+  let none = "none";
+  let block = "block";
+  let hidden = "hidden";
+  let visible = "visible";
+  const setDisplay = (elementId, style) => {
+    document.getElementById(elementId).style.display = style;
+  };
+  const setVisibility = (elementId, style) => {
+    document.getElementById(elementId).style.visibility = style;
+  };
 </script>
 {% endblock %}

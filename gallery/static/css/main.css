@@ -1,4 +1,5 @@
 /* Общие стили */
+
 *,
 :before,
 :after {
@@ -7,7 +8,9 @@
 
 /* Шрифты */
 body {
-  font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  color: #121113;
+  background-color: #fcfff7;
+  font-family: "Montserrat", sans-serif;
 }
 
 /* Безымянные стили */
@@ -36,25 +39,6 @@ body {
   background: #fff;
   align-items: center;
   margin-top: 100px;
-}
-
-/* Стили для логотипа */
-.logo {
-  float: left;
-  display: block;
-  color: #121113;
-  text-align: center;
-  padding: 25px 30px;
-  text-align: center;
-}
-
-.logo a {
-  display: block;
-  color: #CC2936;
-  font-weight: 700;
-  font-size: 30 px;
-  text-decoration: none;
-  transition: 0.15s linear color;
 }
 
 /* Стили для основной навигации */
@@ -104,7 +88,7 @@ body {
 }
 
 
-main {
+.main-zone {
   background: #F5F5F5;
   border-radius: 15px;
   margin-left: 16em;
@@ -431,3 +415,294 @@ label img {
   display: inline-block;
 }
 
+/* HomePage */
+@font-face {
+  font-family: "Montserrat Alternates Black";
+  src: url("../fonts/MontserratAlternates-Black.ttf") format("truetype"), url("../fonts/montserratalternates-black-webfont.woff2") format("woff2"), url("../fonts/montserratalternates-black-webfont.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat Regular", sans-serif;
+  src: url("../fonts/Montserrat-Regular.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat Black", sans-serif;
+  src: url("../fonts/Montserrat-Black.ttf");
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Logo styles */
+.logo {
+  font-family: "Montserrat Alternates Black", sans-serif;
+  font-weight: 900;
+  float: left;
+  display: block;
+  color: #cc2936;
+  text-align: center;
+  padding: 25px 30px;
+  cursor: default;
+}
+.logo a {
+  cursor: default;
+  font-weight: 900;
+  font-style: normal;
+  display: block;
+  color: #cc2936;
+  font-size: 48px;
+  text-decoration: none;
+  transition: 0.15s linear color;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header .button-group .enter {
+  letter-spacing: 1px;
+  border: none;
+  background-color: #cc2936;
+  color: #fcfff7;
+  width: 120px;
+  height: 54px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-family: "Montserrat Alternates Black", sans-serif;
+  cursor: pointer;
+  margin-right: 20px;
+}
+.header .button-group .enter:focus {
+  border: none;
+  outline: none;
+}
+.header .button-group .registration {
+  margin-right: 50px;
+  letter-spacing: 1px;
+  border: none;
+  background-color: #6c6f7d;
+  color: #fcfff7;
+  width: 180px;
+  height: 54px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-family: "Montserrat Alternates Black", sans-serif;
+  cursor: pointer;
+}
+.header .button-group .registration:focus {
+  border: none;
+  outline: none;
+}
+
+.modal {
+  display: none;
+  z-index: 1000;
+  border-radius: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 512px;
+  max-width: 100%;
+  height: 680px;
+  max-height: 100%;
+  background-color: #fcfff7;
+  position: fixed;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+.modal .modal-content {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+.modal .modal-content .close-button {
+  margin-top: 12px;
+  margin-left: 92%;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+.modal .modal-content .close-button:focus {
+  border: none;
+  outline: none;
+}
+.modal .modal-content .welcome {
+  font-family: "Montserrat Black", "Montserrat Black", sans-serif;
+  font-weight: bold;
+  margin-top: 36px;
+  font-size: 24px;
+  text-align: center;
+}
+.modal .modal-content .logo-h2 {
+  font-family: "Montserrat Alternates Black", sans-serif;
+  color: #cc2936;
+  text-align: center;
+  font-size: 24px;
+}
+.modal .modal-content .inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 72px;
+}
+.modal .modal-content .inputs input[type=email] {
+  background-color: transparent;
+  letter-spacing: 1px;
+  width: 288px;
+  height: 46px;
+  border: #6c6f7d 3px solid;
+  border-radius: 15px;
+  padding-left: 10px;
+}
+.modal .modal-content .inputs input[type=email]::placeholder {
+  background-color: transparent;
+  color: #6c6f7d;
+  font-family: "Montserrat", sans-serif;
+}
+.modal .modal-content .inputs .password {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 288px;
+  height: 46px;
+  border: #6c6f7d 3px solid;
+  border-radius: 15px;
+}
+.modal .modal-content .inputs .password .opened {
+  cursor: pointer;
+}
+.modal .modal-content .inputs .password .hidden {
+  background-color: #fcfff7;
+  position: absolute;
+  z-index: 10001;
+  transform: translate(-24px, 2px);
+  width: 24px;
+}
+.modal .modal-content .inputs .password .hidden:hover {
+  cursor: pointer;
+}
+.modal .modal-content .inputs .password-input {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+.modal .modal-content .inputs .password-input:focus {
+  outline: none;
+}
+.modal .modal-content .forgot-password {
+  color: #121113;
+}
+.modal .modal-content .forgot-password:hover {
+  text-decoration: underline #121113;
+  cursor: pointer;
+}
+.modal .modal-content .enter {
+  margin-top: 33px;
+  background-color: #cc2936;
+  border: none;
+  border-radius: 15px;
+  width: 288px;
+  height: 46px;
+  color: #fcfff7;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.modal .modal-content .enter:hover {
+  cursor: pointer;
+}
+.modal .modal-content .agreements {
+  width: 421px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+.modal .modal-content .agreements:hover {
+  cursor: default;
+}
+.modal .modal-content .line {
+  height: 1px;
+  width: 84px;
+  border-top: 1px solid #6c6f7d;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+}
+.modal .modal-content .not-registered {
+  margin-top: 18px;
+  font-size: 12px;
+}
+.modal .modal-content .not-registered a {
+  color: #121113;
+}
+.modal .modal-content .not-registered a:hover {
+  text-decoration: underline #121113;
+  cursor: pointer;
+}
+
+.background-dark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 900;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.grid-container {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: end;
+  justify-content: space-around;
+  margin-left: auto;
+  margin-right: auto;
+}
+.grid-container .grid-element {
+  animation: 2s show ease-out;
+  position: relative;
+  width: 180px;
+}
+.grid-container .grid-element:nth-child(2) {
+  margin-top: 32px;
+}
+@keyframes show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.center-text {
+  font-size: 36px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 18em;
+  margin-top: 100px;
+}
+
+.bottom-gradient {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+  background: rgb(252, 255, 247);
+  background: linear-gradient(180deg, rgba(252, 255, 247, 0) 0%, rgb(252, 255, 247) 100%);
+}

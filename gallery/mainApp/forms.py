@@ -6,12 +6,6 @@ from multiupload.fields import MultiFileField
 from mainApp.models import CustomUser, Album
 
 
-class PasswordInputNoAutocomplete(forms.PasswordInput):
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        context['widget']['attrs'].pop('autocomplete', None)
-        return context
-
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(label='', required=True,

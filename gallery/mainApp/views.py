@@ -22,6 +22,7 @@ def home_view(request):
     show_registration_form = False
     show_login_form = False
     if request.method == 'POST':
+        print(request.POST)
         if 'register_form' in request.POST:
             register_form = CustomUserCreationForm(request.POST)
             if register_form.is_valid():
@@ -33,6 +34,7 @@ def home_view(request):
 
         elif 'login_form' in request.POST:
             login_form = CustomUserAuthForm(request, request.POST)
+            print(login_form)
             if login_form.is_valid():
                 user = authenticate(request, email=login_form.cleaned_data['email'],
                                     password=login_form.cleaned_data['password'])
@@ -42,6 +44,7 @@ def home_view(request):
                 else:
                     show_login_form = True
             else:
+                print("НЕВАЛИД")
                 show_login_form = True
 
     return render(request, 'Home.html', {'registration_form': register_form, 'login_form': login_form,
