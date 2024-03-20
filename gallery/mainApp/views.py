@@ -252,6 +252,21 @@ def delete_file(request, file_id):
 
 
 @login_required
+def delete_file_from_album(request, file_id):
+    file_to_delete = get_object_or_404(Files, id=file_id, user=request.user)
+    # Проверка, принадлежит ли файл пользователю для безопасности
+    if file_to_delete.user != request.user:
+        raise Http404("File not found")
+
+    try:
+        file_to_delete.file.delete()
+        return JsonResponse({'message': 'File successfully deleted'})
+    except Exception as e:
+        print(f"Error deleting file: {e}")
+        return JsonResponse({'error': 'Failed to delete file'}, status=500)
+
+
+@login_required
 def download_file_view(request, file_id):
     file_object = get_object_or_404(Files, id=file_id)
     response = FileResponse(open(file_object.file.path, 'rb'))

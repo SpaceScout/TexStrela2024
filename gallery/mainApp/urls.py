@@ -20,6 +20,7 @@ urlpatterns = [
     re_path(r'^gallery/changeimage/add_text/$', views.add_text),
 
     path('delete/<int:file_id>/', views.delete_file, name="deleting"),
+    path('album/<int:album_id>/delete/<int:file_id>/', views.delete_file, name="deleting_file_from_album"),
     path('download/<int:file_id>/', views.download_file_view, name="saving"),
     path('albums/<int:album_id>/download/', views.download_album, name='download_album'),
 
