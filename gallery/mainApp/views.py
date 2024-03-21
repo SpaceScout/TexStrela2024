@@ -69,7 +69,7 @@ def is_image(file):
 
 
 from ultralytics import YOLO
-modelYolo = YOLO("yolov8m.pt")
+modelYolo = YOLO("yolov8x.pt")
 
 
 def get_decimal_from_dms(dms, ref):
@@ -335,26 +335,41 @@ def delete_file(request, file_id):
         return JsonResponse({'error': 'Failed to delete file'}, status=500)
 
 
-# @login_required
-@csrf_exempt
+@login_required
+# @csrf_exempt
 def delete_file_from_album(request, album_id, file_id):
+    print("ДЕЛИТАЮ")
     album = get_object_or_404(Album, pk=album_id)
+    print(album)
     file_to_delete = get_object_or_404(Files, id=file_id, user=request.user)
+    print(file_to_delete)
     # Проверка, принадлежит ли файл пользователю для безопасности
-    # if file_to_delete.user != request.user:
-    #     raise Http404("File not found")
+    if file_to_delete.user != request.user:
+        raise Http404("File not found")
 
     try:
         if file_to_delete in album.files.all():
             album.files.remove(file_to_delete)
             # Теперь сохраните изменения
             album.save()
-            return JsonResponse({'message': 'File successfully deleted'})
+            referer = request.META.get('HTTP_REFERER')
+            if referer:
+                return redirect(referer)
+            else:
+                return redirect('albums')
         else:
-            return JsonResponse({'error': 'Failed to delete file'}, status=500)
+            referer = request.META.get('HTTP_REFERER')
+            if referer:
+                return redirect(referer)
+            else:
+                return redirect('albums')
     except Exception as e:
         print(f"Error deleting file: {e}")
-        return JsonResponse({'error': 'Failed to delete file'}, status=500)
+        referer = request.META.get('HTTP_REFERER')
+        if referer:
+            return redirect(referer)
+        else:
+            return redirect('albums')
 
 
 @login_required

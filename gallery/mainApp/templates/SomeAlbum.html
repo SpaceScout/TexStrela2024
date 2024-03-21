@@ -54,7 +54,7 @@
             <img src="{{file.file.url}}" class="card-img-top" alt="photo">
             <div class="card-body">
                 <h5 class="card-title">{{ file.title }}</h5>
-                <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
+                <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}} <a href="{% url 'deleting_file_from_album' album_id=album.id file_id=file.id%}"><i class="bi bi-trash"></i></a></p>
                     {% if file.tags.all %}
                         <p>Теги:
                             {% for tag in file.tags.all %}
