@@ -13,6 +13,8 @@ from PIL import Image, ImageEnhance, ImageDraw, ImageFont, ExifTags
 import io
 import zipfile
 
+from django.views.decorators.csrf import csrf_exempt
+
 from mainApp.forms import CustomUserCreationForm, MultiFileForm, CustomUserAuthForm, CreateAlbum
 from mainApp.models import Files, Album, CustomUser, Tag
 
@@ -333,16 +335,23 @@ def delete_file(request, file_id):
         return JsonResponse({'error': 'Failed to delete file'}, status=500)
 
 
-@login_required
-def delete_file_from_album(request, file_id):
+# @login_required
+@csrf_exempt
+def delete_file_from_album(request, album_id, file_id):
+    album = get_object_or_404(Album, pk=album_id)
     file_to_delete = get_object_or_404(Files, id=file_id, user=request.user)
     # Проверка, принадлежит ли файл пользователю для безопасности
-    if file_to_delete.user != request.user:
-        raise Http404("File not found")
+    # if file_to_delete.user != request.user:
+    #     raise Http404("File not found")
 
     try:
-        file_to_delete.file.delete()
-        return JsonResponse({'message': 'File successfully deleted'})
+        if file_to_delete in album.files.all():
+            album.files.remove(file_to_delete)
+            # Теперь сохраните изменения
+            album.save()
+            return JsonResponse({'message': 'File successfully deleted'})
+        else:
+            return JsonResponse({'error': 'Failed to delete file'}, status=500)
     except Exception as e:
         print(f"Error deleting file: {e}")
         return JsonResponse({'error': 'Failed to delete file'}, status=500)
@@ -420,7 +429,6 @@ def delete_user_from_album(request):
 
 
 @login_required
-# @csrf_exempt
 def add_tag(request):
     print("WE ARE ADDING NOW")
     new_tag = request.GET.get('tag')
