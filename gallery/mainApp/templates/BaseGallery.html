@@ -38,7 +38,14 @@
         <h1 class="logo">
             <a href="{% url 'gallery' %}">SharedPhotos</a>
         </h1>
-        <input type="text" placeholder="Search..">
+        <input type="text" id="searchInput" list="metadataOptions" value="{{ search_query }}" placeholder="Search..." onkeypress="handleKeyPress(event)">
+        <datalist id="metadataOptions">
+            <option value="Дата создания:">
+            <option value="Автор:">
+            <option value="Геолокация:">
+            <option value="Тег:">
+            <!-- Добавьте другие опции -->
+        </datalist>
         <div class="buttons-container">
             <a class="logout_button" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right bi-6x"></i></a>
         </div>
@@ -97,5 +104,14 @@
     <script src="{% static 'js/RightClickMenu.js' %}"></script>
 {% endif %}
 
-{% block scripts %}{% endblock %}
+{% block scripts %}
+<script>
+    function handleKeyPress(event) {
+        if (event.keyCode === 13) { // Проверка кода клавиши Enter
+            var searchText = document.getElementById('searchInput').value;
+            window.location.href = '?search=' + encodeURIComponent(searchText);
+        }
+    }
+</script>    
+{% endblock %}
 </html>

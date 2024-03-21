@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import os
 from io import BytesIO
@@ -8,7 +9,7 @@ from django.db.models import Q
 from django.http import Http404, JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.images import get_image_dimensions
-from PIL import Image, ImageEnhance, ImageDraw, ImageFont
+from PIL import Image, ImageEnhance, ImageDraw, ImageFont, ExifTags
 import io
 import zipfile
 
@@ -65,19 +66,64 @@ def is_image(file):
         return False
 
 
+from ultralytics import YOLO
+modelYolo = YOLO("yolov8m.pt")
+
+
+def get_decimal_from_dms(dms, ref):
+    degrees, minutes, seconds = dms
+    decimal = degrees + (minutes / 60.0) + (seconds / 3600.0)
+    if ref in ['S', 'W']:
+        decimal = -decimal
+    return decimal
+
+def get_image_metadata(file_path):
+    image = Image.open(file_path)
+    metadata = {
+        "file_size": image.size,  # Размер изображения в пикселях
+        "author": None,  # Автор будет заполнен, если присутствует в EXIF
+        "date_taken": None,  # Дата съёмки
+        "location": None,  # Геолокация
+    }
+
+    # Получение метаданных EXIF
+    exif_data = image._getexif()
+    if exif_data:
+        for tag_id, value in exif_data.items():
+            tag = ExifTags.TAGS.get(tag_id, tag_id)
+            if tag == "Artist":
+                metadata['author'] = value
+            elif tag == "DateTimeOriginal":
+                try:
+                    metadata['date_taken'] = datetime.strptime(value, '%Y:%m:%d %H:%M:%S')
+                except ValueError:
+                    pass  # Неверный формат даты
+            elif tag == "GPSInfo":
+                gps_data = {}
+                for t in value:
+                    sub_tag = ExifTags.GPSTAGS.get(t, t)
+                    gps_data[sub_tag] = value[t]
+
+                if 'GPSLatitude' in gps_data and 'GPSLongitude' in gps_data:
+                    lat = get_decimal_from_dms(gps_data['GPSLatitude'], gps_data['GPSLatitudeRef'])
+                    lon = get_decimal_from_dms(gps_data['GPSLongitude'], gps_data['GPSLongitudeRef'])
+                    metadata['location'] = (lat, lon)
+
+    return metadata
+
+
+
 @login_required
 def gallery_view(request):
     try:
         if request.method == 'POST':
             form = MultiFileForm(request.POST, request.FILES)
             if form.is_valid():
-                from ultralytics import YOLO
-                model = YOLO("yolov8m.pt")
 
                 for file in request.FILES.getlist('files'):
                     if (is_image(file)):
                         image = Image.open(file)
-                        results = model.predict(image)
+                        results = modelYolo.predict(image)
                         result = results[0]
                         tags = []
                         for box in result.boxes:
@@ -85,7 +131,12 @@ def gallery_view(request):
                             tags.append(class_id)
                             print(class_id)
                         title = file.name
-                        new_file = Files.objects.create(user=request.user, file=file, title=title)
+                        metadata = get_image_metadata(file)
+
+                        new_file = Files.objects.create(user=request.user, file=file, title=title, 
+                                                        author=metadata.get('author'),
+                                                        date_taken=metadata.get('date_taken'),
+                                                        location=metadata.get('location'))
                         for tag in tags:
                             if not new_file.tags.filter(name=tag).exists():
                                 new_tag, created = Tag.objects.get_or_create(name=tag)
@@ -97,14 +148,45 @@ def gallery_view(request):
             return redirect('gallery')
         else:
             form = MultiFileForm()
-            photos = Files.objects.filter(
-                Q(user=request.user, file__endswith='.jpg') |
-                Q(user=request.user, file__endswith='.jpeg') |
-                Q(user=request.user, file__endswith='.png') |
-                Q(user=request.user, file__endswith='.raw') |
-                Q(user=request.user, file__endswith='.dng')
+            search_query = request.GET.get('search', '')
+            query = Q(user=request.user) & (
+                Q(file__endswith='.jpg') | Q(file__endswith='.jpeg') |
+                Q(file__endswith='.png') | Q(file__endswith='.raw') | Q(file__endswith='.dng')
             )
-            return render(request, 'Gallery.html', {'photos': photos, 'form': form})
+            if ':' in search_query:
+                filter_type, filter_value = search_query.split(':', 1)
+
+                # Примеры фильтров
+                if filter_type == 'Дата создания':
+                    filter_value = filter_value.strip()
+                    # Проверка, является ли filter_value просто годом (четырехзначным числом)
+                    if len(filter_value) == 4 and filter_value.isdigit():
+                        try:
+                            year_value = int(filter_value)
+                            # Создаем фильтр для изображений, сделанных в любое время в указанный год
+                            query &= Q(date_taken__year=year_value)
+                        except ValueError:
+                            pass  # В случае, если значение не является действительным годом
+                    else:
+                        try:
+                            # Преобразование строки в объект datetime
+                            date_value = datetime.strptime(filter_value, '%Y-%m-%d')
+                            query &= Q(date_taken=date_value)
+                        except ValueError:
+                            pass  # Неверный формат даты
+                elif filter_type == 'Автор':
+                    query &= Q(author__icontains=filter_value.strip())
+                elif filter_type == 'Геолокация':
+                    query &= Q(location__icontains=filter_value.strip())
+                elif filter_type == 'Тег':
+                    query &= Q(tags__name__icontains=filter_value)
+                # Добавьте другие условия фильтрации
+
+                photos = Files.objects.filter(query)
+            else:
+                photos = Files.objects.filter(query)
+
+            return render(request, 'Gallery.html', {'photos': photos, 'form': form, 'search_query': search_query})
     except ValueError:
         return redirect('gallery')
 
@@ -463,9 +545,9 @@ def save_image(request):
 
         image = image.rotate(-int(rValue))
 
-        image.save(rotated_photo, 'JPEG')
+        image.save(rotated_photo, "PNG")
 
-        myModel.file.save(f"{photo[photo.rindex('/') + 1:photo.rindex('.'):]}.jpg",
+        myModel.file.save(f"{photo[photo.rindex('/') + 1:photo.rindex('.'):]}.png",
                           ContentFile(rotated_photo.getvalue()))
         myModel.save()
 

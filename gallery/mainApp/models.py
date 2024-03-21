@@ -23,6 +23,9 @@ class Files(models.Model):
     file = models.FileField(upload_to=user_directory_path, )
     created_at = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(Tag, blank=True)
+    author = models.CharField(max_length=255, blank=True, null=True)
+    date_taken = models.DateTimeField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.email}'s File"
