@@ -37,7 +37,6 @@ def home_view(request):
 
         elif 'login_form' in request.POST:
             login_form = CustomUserAuthForm(request, request.POST)
-            print(login_form)
             if login_form.is_valid():
                 user = authenticate(request, email=login_form.cleaned_data['email'],
                                     password=login_form.cleaned_data['password'])
@@ -47,7 +46,6 @@ def home_view(request):
                 else:
                     show_login_form = True
             else:
-                print("НЕВАЛИД")
                 show_login_form = True
 
     return render(request, 'Home.html', {'registration_form': register_form, 'login_form': login_form,
@@ -338,11 +336,8 @@ def delete_file(request, file_id):
 @login_required
 # @csrf_exempt
 def delete_file_from_album(request, album_id, file_id):
-    print("ДЕЛИТАЮ")
     album = get_object_or_404(Album, pk=album_id)
-    print(album)
     file_to_delete = get_object_or_404(Files, id=file_id, user=request.user)
-    print(file_to_delete)
     # Проверка, принадлежит ли файл пользователю для безопасности
     if file_to_delete.user != request.user:
         raise Http404("File not found")
