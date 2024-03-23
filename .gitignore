@@ -1,1 +1,3 @@
 gallery/yolov8x.pt
+gallery/media/*
+gallery/migrations/*
