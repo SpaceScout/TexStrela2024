@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil.parser import parse
 import json
 import os
 from io import BytesIO
@@ -18,7 +19,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from mainApp.forms import CustomUserCreationForm, MultiFileForm, CustomUserAuthForm, CreateAlbum
 from mainApp.models import Files, Album, CustomUser, Tag
+import locale
 
+
+locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
 def home_view(request):
     register_form = CustomUserCreationForm()
@@ -114,6 +118,11 @@ def get_image_metadata(file_path):
     return metadata
 
 
+months = {
+    'январь': 'January', 'февраль': 'February', 'март': 'March', 'апрель': 'April', 
+    'май': 'May', 'июнь': 'June', 'июль': 'July', 'август': 'August', 
+    'сентябрь': 'September', 'октябрь': 'October', 'ноябрь': 'November', 'декабрь': 'December'
+}
 
 @login_required
 def gallery_view(request):
@@ -179,22 +188,55 @@ def gallery_view(request):
 
                 # Примеры фильтров
                 if filter_type == 'Дата создания':
-                    filter_value = filter_value.strip()
+                    filter_value = filter_value.strip().lower()
                     # Проверка, является ли filter_value просто годом (четырехзначным числом)
                     if len(filter_value) == 4 and filter_value.isdigit():
                         try:
                             year_value = int(filter_value)
-                            # Создаем фильтр для изображений, сделанных в любое время в указанный год
                             query &= Q(date_taken__year=year_value)
                         except ValueError:
-                            pass  # В случае, если значение не является действительным годом
+                            pass
                     else:
                         try:
-                            # Преобразование строки в объект datetime
-                            date_value = datetime.strptime(filter_value, '%Y-%m-%d')
-                            query &= Q(date_taken=date_value)
+                            # Попытка интерпретировать строку как дату в формате 'dd.mm.yyyy'
+                            day_start = datetime.strptime(filter_value, '%d.%m.%Y')
+                            day_end = day_start + timedelta(days=1)
+                            query &= Q(date_taken__range=(day_start, day_end))
                         except ValueError:
-                            pass  # Неверный формат даты
+                            # Попытка интерпретировать строку как название месяца
+                            try:
+                                month_value = parse(months[filter_value]).month
+                                year_now = datetime.now().year
+                                start_date = datetime(2000, month_value, 1)
+                                end_date = datetime(year_now, month_value + 1, 1)
+                                query &= Q(date_taken__range=(start_date, end_date))
+                            except KeyError:
+                                return HttpResponse(status=500, content="Если что надо на русском месяц писать")
+                elif filter_type == 'Дата загрузки':
+                    filter_value = filter_value.strip().lower()
+                    # Проверка, является ли filter_value просто годом (четырехзначным числом)
+                    if len(filter_value) == 4 and filter_value.isdigit():
+                        try:
+                            year_value = int(filter_value)
+                            query &= Q(created_at__year=year_value)
+                        except ValueError:
+                            pass
+                    else:
+                        try:
+                            # Попытка интерпретировать строку как дату в формате 'dd.mm.yyyy'
+                            day_start = datetime.strptime(filter_value, '%d.%m.%Y')
+                            day_end = day_start + timedelta(days=1)
+                            query &= Q(created_at__range=(day_start, day_end))
+                        except ValueError:
+                            # Попытка интерпретировать строку как название месяца
+                            try:
+                                month_value = parse(months[filter_value]).month
+                                year_now = datetime.now().year
+                                start_date = datetime(2000, month_value, 1)
+                                end_date = datetime(year_now, month_value + 1, 1)
+                                query &= Q(created_at__range=(start_date, end_date))
+                            except KeyError:
+                                return HttpResponse(status=500, content="Если что надо на русском месяц писать")
                 elif filter_type == 'Автор':
                     query &= Q(author__icontains=filter_value.strip())
                 elif filter_type == 'Геолокация':
