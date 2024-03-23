@@ -26,6 +26,7 @@ class Files(models.Model):
     author = models.CharField(max_length=255, blank=True, null=True)
     date_taken = models.DateTimeField(blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
+    face_detected = models.BooleanField(default=False)  # Поле для хранения информации о наличии лица
 
     def __str__(self):
         return f"{self.user.email}'s File"

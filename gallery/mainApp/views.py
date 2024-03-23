@@ -12,6 +12,7 @@ from django.core.files.images import get_image_dimensions
 from PIL import Image, ImageEnhance, ImageDraw, ImageFont, ExifTags
 import io
 import zipfile
+import numpy as np
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -37,7 +38,6 @@ def home_view(request):
 
         elif 'login_form' in request.POST:
             login_form = CustomUserAuthForm(request, request.POST)
-            print(login_form)
             if login_form.is_valid():
                 user = authenticate(request, email=login_form.cleaned_data['email'],
                                     password=login_form.cleaned_data['password'])
@@ -47,7 +47,6 @@ def home_view(request):
                 else:
                     show_login_form = True
             else:
-                print("НЕВАЛИД")
                 show_login_form = True
 
     return render(request, 'Home.html', {'registration_form': register_form, 'login_form': login_form,
@@ -70,6 +69,7 @@ def is_image(file):
 
 from ultralytics import YOLO
 modelYolo = YOLO("yolov8x.pt")
+from deepface import DeepFace
 
 
 def get_decimal_from_dms(dms, ref):
@@ -135,10 +135,21 @@ def gallery_view(request):
                         title = file.name
                         metadata = get_image_metadata(file)
 
+                        detected_face = False
+
+                        try:
+                            cv_image = np.array(image)
+                            cv_image = cv_image[:, :, ::-1].copy()  # PIL использует RGB, OpenCV использует BGR
+                            if len(DeepFace.extract_faces(img_path=cv_image, align=True)) > 0:
+                                detected_face = True  # Установка поля face_detected в True, если лицо обнаружено
+                        except Exception:
+                            pass
+
                         new_file = Files.objects.create(user=request.user, file=file, title=title, 
                                                         author=metadata.get('author'),
                                                         date_taken=metadata.get('date_taken'),
-                                                        location=metadata.get('location'))
+                                                        location=metadata.get('location'),
+                                                        face_detected=detected_face)
                         for tag in tags:
                             if not new_file.tags.filter(name=tag).exists():
                                 new_tag, created = Tag.objects.get_or_create(name=tag)
@@ -182,6 +193,26 @@ def gallery_view(request):
                     query &= Q(location__icontains=filter_value.strip())
                 elif filter_type == 'Тег':
                     query &= Q(tags__name__icontains=filter_value)
+                elif filter_type == 'Совпадения':
+                    reference_image_path = "." + filter_value  # Эталонное изображение
+                    db_path = os.path.dirname(reference_image_path)  # Папка для поиска
+                    
+                    try:   # Выполняем поиск совпадений с эталонным изображением
+                        results = DeepFace.find(img_path=reference_image_path, db_path=db_path)
+                        similar_images = [item for result in results if 'identity' in result for item in result['identity']]
+                        similar_images_names = [os.path.basename(path) for path in similar_images]
+                        queries = [Q(file__icontains=image_name) for image_name in similar_images_names]
+
+                        # Объединяем все условия в одно с помощью оператора OR
+                        combined_query = queries.pop()
+
+                        for individual_query in queries:
+                            combined_query |= individual_query
+
+                        # Добавляем combined_query к основному запросу
+                        query &= combined_query
+                    except Exception as e:
+                        print(f"Произошла ошибка при выполнении DeepFace.find: {e}")
                 # Добавьте другие условия фильтрации
 
                 photos = Files.objects.filter(query)
@@ -189,7 +220,8 @@ def gallery_view(request):
                 photos = Files.objects.filter(query)
 
             return render(request, 'Gallery.html', {'photos': photos, 'form': form, 'search_query': search_query})
-    except ValueError:
+    except ValueError as e:
+        print(e)
         return redirect('gallery')
 
 
@@ -338,11 +370,8 @@ def delete_file(request, file_id):
 @login_required
 # @csrf_exempt
 def delete_file_from_album(request, album_id, file_id):
-    print("ДЕЛИТАЮ")
     album = get_object_or_404(Album, pk=album_id)
-    print(album)
     file_to_delete = get_object_or_404(Files, id=file_id, user=request.user)
-    print(file_to_delete)
     # Проверка, принадлежит ли файл пользователю для безопасности
     if file_to_delete.user != request.user:
         raise Http404("File not found")

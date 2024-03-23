@@ -370,6 +370,20 @@ label img {
   color: #CC2936;
 }
 
+.location_button {
+  padding: 7px 7px 6px;
+  border: 0;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  font-size: 1.1em;
+  -webkit-text-stroke: 1px;
+}
+
+.location_button:hover {
+  color: #CC2936;
+}
+
 .logout_button {
   color: #121113;
   text-decoration: none;

@@ -16,7 +16,14 @@
                     {% endif %}
                 </a>
                 <div class="card-body">
-                    <h5 class="card-title">{{ file.title }}</h5>
+                    <h5 class="card-title">{{ file.title }}
+                        {% if file.location %}
+                            <a class="location_button" href="http://maps.google.com/?q={{ file.location }}"><i class="bi bi-geo-alt"></i></a>
+                        {% endif %}
+                        {% if file.face_detected %}
+                            <a class="location_button" href="?search=Совпадения:{{ file.file.url }}"><i class="bi bi-file-person"></i></a>
+                        {% endif %}
+                    </h5>
                     <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
                     {% if file.tags.all %}
                         <p>Теги:
