@@ -119,10 +119,10 @@ def get_image_metadata(file_path):
 
 
 months = {
-    'январь': 'January', 'февраль': 'February', 'март': 'March', 'апрель': 'April', 
-    'май': 'May', 'июнь': 'June', 'июль': 'July', 'август': 'August', 
-    'сентябрь': 'September', 'октябрь': 'October', 'ноябрь': 'November', 'декабрь': 'December'
+    'январь': 1, 'февраль': 2, 'март': 3, 'апрель': 4, 'май': 5, 'июнь': 6,
+    'июль': 7, 'август': 8, 'сентябрь': 9, 'октябрь': 10, 'ноябрь': 11, 'декабрь': 12
 }
+
 
 @login_required
 def gallery_view(request):
@@ -205,11 +205,13 @@ def gallery_view(request):
                         except ValueError:
                             # Попытка интерпретировать строку как название месяца
                             try:
-                                month_value = parse(months[filter_value]).month
-                                year_now = datetime.now().year
-                                start_date = datetime(2000, month_value, 1)
-                                end_date = datetime(year_now, month_value + 1, 1)
-                                query &= Q(date_taken__range=(start_date, end_date))
+                                filter_parts = filter_value.split()
+                                month_number = months[filter_parts[0]]
+                                year_number = int(filter_parts[1])
+                                import calendar
+                                month_start = datetime(year_number, month_number, 1)
+                                month_end = datetime(year_number, month_number, calendar.monthrange(year_number, month_number)[1])
+                                query &= Q(date_taken__range=(month_start, month_end))
                             except KeyError:
                                 return HttpResponse(status=500, content="Если что надо на русском месяц писать")
                 elif filter_type == 'Дата загрузки':
@@ -229,12 +231,15 @@ def gallery_view(request):
                             query &= Q(created_at__range=(day_start, day_end))
                         except ValueError:
                             # Попытка интерпретировать строку как название месяца
+                             # Попытка интерпретировать строку как название месяца
                             try:
-                                month_value = parse(months[filter_value]).month
-                                year_now = datetime.now().year
-                                start_date = datetime(2000, month_value, 1)
-                                end_date = datetime(year_now, month_value + 1, 1)
-                                query &= Q(created_at__range=(start_date, end_date))
+                                filter_parts = filter_value.split()
+                                month_number = months[filter_parts[0]]
+                                year_number = int(filter_parts[1])
+                                import calendar
+                                month_start = datetime(year_number, month_number, 1)
+                                month_end = datetime(year_number, month_number, calendar.monthrange(year_number, month_number)[1])
+                                query &= Q(created_at__range=(month_start, month_end))
                             except KeyError:
                                 return HttpResponse(status=500, content="Если что надо на русском месяц писать")
                 elif filter_type == 'Автор':
