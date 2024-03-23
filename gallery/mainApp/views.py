@@ -148,8 +148,8 @@ def gallery_view(request):
                             cv_image = cv_image[:, :, ::-1].copy()  # PIL использует RGB, OpenCV использует BGR
                             if len(DeepFace.extract_faces(img_path=cv_image, align=True)) > 0:
                                 detected_face = True  # Установка поля face_detected в True, если лицо обнаружено
-                            image.close()
-                            np.allclose()
+                            # image.close()
+                            # np.allclose()
                         except Exception:
                             pass
 
@@ -284,7 +284,7 @@ def show_image(request, file_id):
 
 
         jpeg_data = io.BytesIO()
-        image.save(jpeg_data, format='JPEG')
+        image.save(jpeg_data, format='png')
         image.close()
 
         value = jpeg_data.getvalue()
@@ -293,7 +293,7 @@ def show_image(request, file_id):
         file.file.close()
 
         # Возвращаем JPEG изображение в HttpResponse
-        return HttpResponse(value, content_type='image/jpeg')
+        return HttpResponse(value, content_type='image/png')
     except Files.DoesNotExist:
         return HttpResponse(status=404, content="File not found")
     
@@ -305,7 +305,7 @@ def show_image_orig(request, file_id):
         image = Image.open(image_data)
 
         jpeg_data = io.BytesIO()
-        image.save(jpeg_data, format='JPEG')
+        image.save(jpeg_data, format='png')
         image.close()
 
         value = jpeg_data.getvalue()
@@ -313,7 +313,7 @@ def show_image_orig(request, file_id):
         image_data.close()
         file.file.close()
         # Возвращаем JPEG изображение в HttpResponse
-        return HttpResponse(value, content_type='image/jpeg')
+        return HttpResponse(value, content_type='image/png')
     except Files.DoesNotExist:
         return HttpResponse(status=404, content="File not found")
 
