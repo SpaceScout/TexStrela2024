@@ -20,9 +20,12 @@
                         {% if file.location %}
                             <a class="location_button" href="http://maps.google.com/?q={{ file.location }}"><i class="bi bi-geo-alt"></i></a>
                         {% endif %}
+<<<<<<< HEAD
                         {% if file.face_detected %}
                             <a class="location_button" href="?search=Совпадения:{{ file.file.url }}"><i class="bi bi-file-person"></i></a>
                         {% endif %}
+=======
+>>>>>>> f5073ac5a74c78b26eed636346121162eeeac8b9
                     </h5>
                     <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}}</p>
                     {% if file.tags.all %}
