@@ -11,6 +11,7 @@ urlpatterns = [
     path('videos/', views.videos_view, name="videos"),
     path('albums/<int:album_id>/', views.album_view, name='album_files'),
     path('show_image/<int:file_id>/', views.show_image, name='show_image'),
+    path('show_image_orig/<int:file_id>/', views.show_image_orig, name='show_image_orig'),
 
     re_path(r'^gallery/changeimage/$', views.change_image_view, name='user_change_image'),
     path('gallery/changeimage/save_image/', views.save_image),

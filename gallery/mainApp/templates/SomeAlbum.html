@@ -51,7 +51,7 @@
     {% for file in photos %}
         <!--    bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
         <div class="card" style="width: 18rem;" data-photo-id="{{ file.id }}">
-            <img src="{{file.file.url}}" class="card-img-top" alt="photo">
+            <img src="{% url 'show_image' file.id %}" class="card-img-top" alt="{{ file.title }}">
             <div class="card-body">
                 <h5 class="card-title">{{ file.title }}</h5>
                 <p class="card-text">Загружено {{file.created_at|date:"d.m.Y в H:i"}} <a href="{% url 'deleting_file_from_album' album_id=album.id file_id=file.id%}"><i class="bi bi-trash"></i></a></p>
@@ -71,13 +71,14 @@
     {% for video in videos %}
         <!--bootstrap element for beautiful card view. Also in videos.html, Gallery.html, SomeAlbum.html-->
         <div class="card" style="width: 18rem;" data-photo-id="{{ video.id }}">
-            <video controls width="250" height="380">
+            <video controls width="100%" height="380">
                     <source src="{{ video.file.url }}" type="video/mp4">
                     Your browser does not support the video tag.
             </video>
             <div class="card-body">
                 <h5 class="card-title">{{ video.title }}</h5>
-                <p class="card-text">Загружено {{video.created_at|date:"d.m.Y в H:i"}}</p>
+                <p class="card-text">Загружено {{video.created_at|date:"d.m.Y в H:i"}}<a href="{% url 'deleting_file_from_album' album_id=album.id file_id=video.id%}"><i class="bi bi-trash"></i></a>
+                </p>
             </div>
         </div>
     {% endfor %}

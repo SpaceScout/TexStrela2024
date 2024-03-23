@@ -6,7 +6,7 @@
 {% block content %}
 <!-- style="filter: brightness(50%);" -->
     <div style="display: inline-block; width: 70%; margin-top: 5%;">
-        <img id="image" src="{{photourl}}"  style="margin:auto;">
+        <img id="image" src="{% url 'show_image_orig' photoid %}"  style="margin:auto;">
         <!-- <img id="imageforchanging" style="display: block; margin:auto" src="{{photourl}}"  alt="photo" width="40%" height="auto"> -->
     </div>
 

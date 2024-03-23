@@ -9,11 +9,11 @@
         {% for file in photos %}
             <div class="card" style="width: 18rem;" data-photo-id="{{ file.id }}">
                 <a target="_blank" href="changeimage/?photo={{file.file.url}}&id={{file.id}}">
-                    {% if file.file.name|lower|slice:"-4:" == '.dng' %}
+                    {% comment %} {% if file.file.name|lower|slice:"-4:" == '.dng' %} {% endcomment %}
                         <img src="{% url 'show_image' file.id %}" class="card-img-top" alt="{{ file.title }}">
-                    {% else %}
+                    {% comment %} {% else %}
                         <img src="{{file.file.url}}" class="card-img-top" alt="photo">
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                 </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ file.title }}

@@ -8,6 +8,7 @@
 
 /* Шрифты */
 body {
+  overflow: hidden;
   color: #121113;
   background-color: #fcfff7;
   font-family: "Montserrat", sans-serif;
@@ -60,12 +61,12 @@ body {
   color: #000000;
   font: 1.5em 'Source Sans Pro', Helvetica, Arial, sans-serif;
   text-align: left;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
   text-decoration: none;
 }
 
 .main-nav a:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
   color: #CC2936;
 }
 
@@ -79,7 +80,7 @@ body {
   display: block;
   position: relative;
   z-index: 1;
-  transition: 0.35s ease color;
+  transition: 0.35s ease color, transform 0.5s ease;
 }
 
 .list-hover-slide a.is-current,
@@ -387,6 +388,7 @@ label img {
 .logout_button {
   color: #121113;
   text-decoration: none;
+  transition: all 0.2s ease-in-out;
 }
 
 .logout_button:hover {
@@ -408,6 +410,11 @@ label img {
   -webkit-box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
   -moz-box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
   box-shadow: 2px 3px 7px 4px rgba(34, 60, 80, 0.33);
+  transition: scale 0.2s ease-in-out;
+}
+
+.upload_button:hover {
+  scale: 1.03;
 }
 
 .add_files_button {
@@ -455,7 +462,7 @@ label img {
   cursor: default;
 }
 .logo a {
-  cursor: default;
+  cursor: pointer;
   font-weight: 900;
   font-style: normal;
   display: block;
@@ -559,4 +566,25 @@ label img {
   height: 150px;
   background: rgb(252, 255, 247);
   background: linear-gradient(180deg, rgba(252, 255, 247, 0) 0%, rgb(252, 255, 247) 100%);
+}
+
+
+#style-3::-webkit-scrollbar-track
+{
+  border-radius: 5px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+#style-3::-webkit-scrollbar
+{
+  width: 10px;
+  border-radius: 5px;
+	background-color: #F5F5F5;
+}
+
+#style-3::-webkit-scrollbar-thumb
+{
+  border-radius: 5px;
+	background-color: #b31a26;
 }

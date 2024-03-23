@@ -123,7 +123,13 @@ def gallery_view(request):
             if form.is_valid():
 
                 for file in request.FILES.getlist('files'):
-                    if (is_image(file)):
+                    file_name = "ebaka"
+                    try:
+                        file_name = file.file.name.lower()
+                    except:
+                        pass
+
+                    if (is_image(file) and not file_name.endswith(".dng")):
                         image = Image.open(file)
                         results = modelYolo.predict(image)
                         result = results[0]
@@ -142,6 +148,8 @@ def gallery_view(request):
                             cv_image = cv_image[:, :, ::-1].copy()  # PIL использует RGB, OpenCV использует BGR
                             if len(DeepFace.extract_faces(img_path=cv_image, align=True)) > 0:
                                 detected_face = True  # Установка поля face_detected в True, если лицо обнаружено
+                            image.close()
+                            np.allclose()
                         except Exception:
                             pass
 
@@ -225,18 +233,87 @@ def gallery_view(request):
         return redirect('gallery')
 
 
+def resize_and_crop(image, target_width, target_height, crop_mode='top'):
+    """
+    Масштабирует и обрезает изображение до заданных размеров, сохраняя пропорции.
+    crop_mode может быть 'top', 'middle' или 'bottom'.
+    """
+    pil_image = Image.open(image)
+
+    # Исходные размеры и соотношение сторон изображения
+    orig_width, orig_height = pil_image.size
+    orig_ratio = orig_width / orig_height
+
+    # Целевое соотношение сторон
+    target_ratio = target_width / target_height
+
+    # Масштабирование изображения
+    if orig_ratio > target_ratio:
+        # Изображение слишком широкое, масштабируем по высоте
+        scale_height = target_height
+        scale_width = int(scale_height * orig_ratio)
+    else:
+        # Изображение слишком высокое, масштабируем по ширине
+        scale_width = target_width
+        scale_height = int(scale_width / orig_ratio)
+
+    scaled_image = pil_image.resize((scale_width, scale_height), Image.Resampling.LANCZOS)
+
+    # Расчет начальных координат для обрезки
+    if crop_mode == 'top':
+        x0 = (scale_width - target_width) // 2
+        y0 = 0
+    elif crop_mode == 'middle':
+        x0 = (scale_width - target_width) // 2
+        y0 = (scale_height - target_height) // 2
+    else: # bottom
+        x0 = (scale_width - target_width) // 2
+        y0 = scale_height - target_height
+
+    # Обрезка изображения
+    cropped_image = scaled_image.crop((x0, y0, x0 + target_width, y0 + target_height))
+
+    return cropped_image
+
+
 def show_image(request, file_id):
     try:
         file = Files.objects.get(id=file_id)
-        image_data = file.file.read()
+        image_data = io.BytesIO(file.file.read())
+        image = resize_and_crop(image_data, 300, 300)
 
-        # Преобразование .dng/ в JPEG
-        image = Image.open(io.BytesIO(image_data))
+
         jpeg_data = io.BytesIO()
         image.save(jpeg_data, format='JPEG')
+        image.close()
+
+        value = jpeg_data.getvalue()
+        jpeg_data.close()
+        image_data.close()
+        file.file.close()
 
         # Возвращаем JPEG изображение в HttpResponse
-        return HttpResponse(jpeg_data.getvalue(), content_type='image/jpeg')
+        return HttpResponse(value, content_type='image/jpeg')
+    except Files.DoesNotExist:
+        return HttpResponse(status=404, content="File not found")
+    
+    
+def show_image_orig(request, file_id):
+    try:
+        file = Files.objects.get(id=file_id)
+        image_data = io.BytesIO(file.file.read())
+        image = Image.open(image_data)
+
+        jpeg_data = io.BytesIO()
+        image.save(jpeg_data, format='JPEG')
+        image.close()
+
+        value = jpeg_data.getvalue()
+        jpeg_data.close()
+        image_data.close()
+        file.file.close()
+        # Возвращаем JPEG изображение в HttpResponse
+        return HttpResponse(value, content_type='image/jpeg')
     except Files.DoesNotExist:
         return HttpResponse(status=404, content="File not found")
 
@@ -371,13 +448,14 @@ def delete_file(request, file_id):
 # @csrf_exempt
 def delete_file_from_album(request, album_id, file_id):
     album = get_object_or_404(Album, pk=album_id)
-    file_to_delete = get_object_or_404(Files, id=file_id, user=request.user)
+    file_to_delete = get_object_or_404(Files, id=file_id)
     # Проверка, принадлежит ли файл пользователю для безопасности
-    if file_to_delete.user != request.user:
-        raise Http404("File not found")
-
+    # if file_to_delete.user != request.user:
+    #     raise Http404("File not found")
+    print("Ebaka")
     try:
         if file_to_delete in album.files.all():
+            print("Ebaka")
             album.files.remove(file_to_delete)
             # Теперь сохраните изменения
             album.save()
@@ -433,6 +511,8 @@ def download_album(request, album_id):
     # Отправляем zip-архив как ответ
     response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="{album.title}.zip"'
+    file.file.close()
+    zip_buffer.close()
     return response
 
 
@@ -538,12 +618,17 @@ def save_text_on_image(request):
     width, height = image.size
     draw_text = ImageDraw.Draw(image)
     draw_text.text(((width * int(textX)) / 100, (height * int(textY)) / 100), textValue, fill=textColor, font=font)
-    image.save(output_photo, 'JPEG')
+    image.save(output_photo, 'png')
 
-    myModel.file.save(f"{id}_withtext.jpg", ContentFile(output_photo.getvalue()))
+    myModel.file.save(f"{id}_withtext.png", ContentFile(output_photo.getvalue()))
     myModel.save()
 
     path = myModel.file.path
+    
+    image.close()
+    original_photo.close()
+    output_photo.close()
+    
     return HttpResponse(json.dumps({'filepath': path[path.index("media") - 1::]}), content_type="application/json")
 
 
@@ -564,12 +649,18 @@ def save_cropped_image(request):
 
     image = image.crop((x, y, x + width, y + height))
 
-    image.save(output_photo, 'JPEG')
+    image.save(output_photo, 'png')
+
 
     myModel.file.save(f"{id}_cropped.jpg", ContentFile(output_photo.getvalue()))
     myModel.save()
 
     path = myModel.file.path
+    
+    original_photo.close()
+    image.close()
+    output_photo.close()
+    
     return HttpResponse(json.dumps({'filepath': path[path.index("media") - 1::]}), content_type="application/json")
 
 
@@ -582,6 +673,8 @@ def save_image(request):
         id = request.GET.get('id')
 
         myModel = Files.objects.get(pk=id)
+        
+        print(myModel)
 
         original_photo = BytesIO(myModel.file.read())
         rotated_photo = BytesIO()
@@ -599,9 +692,16 @@ def save_image(request):
 
         image.save(rotated_photo, "PNG")
 
-        myModel.file.save(f"{photo[photo.rindex('/') + 1:photo.rindex('.'):]}.png",
+        print("ПХОТО: " + myModel.title)
+
+        myModel.file.save(f"{myModel.title}.png",
                           ContentFile(rotated_photo.getvalue()))
         myModel.save()
 
         path = myModel.file.path
+        print("ПАТХ: " + path)
+        
+        image.close()
+        original_photo.close()
+        rotated_photo.close()
         return HttpResponse(json.dumps({'filepath': path[path.index("media") - 1::]}), content_type="application/json")

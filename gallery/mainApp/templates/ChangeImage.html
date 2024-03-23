@@ -8,7 +8,7 @@
     <div style="display: inline-block; width: 70%; margin-top: 5%;">
         <div style=" width:40%; margin: auto; position: relative;">
             <div style="position: absolute; visibility: hidden; z-index: 1;" id="textOnImage">TEXT</div>
-            <img id="imageforchanging" style="display: block; margin:auto" src="{{photourl}}"  alt="photo" width="100%" height="auto">
+            <img id="imageforchanging" style="display: block; margin:auto" src="{% url 'show_image_orig' photoid %}"  alt="photo" width="100%" height="auto">
         </div>
     </div>
 

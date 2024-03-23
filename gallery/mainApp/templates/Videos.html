@@ -16,6 +16,14 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ video.title }}</h5>
                     <p class="card-text">Загружено {{video.created_at|date:"d.m.Y в H:i"}}</p>
+                    {% if video.tags.all %}
+                        <p>Теги:
+                            {% for tag in video.tags.all %}
+                                {{ tag.name }}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
