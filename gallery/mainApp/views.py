@@ -15,8 +15,6 @@ import io
 import zipfile
 import numpy as np
 
-from django.views.decorators.csrf import csrf_exempt
-
 from mainApp.forms import CustomUserCreationForm, MultiFileForm, CustomUserAuthForm, CreateAlbum
 from mainApp.models import Files, Album, CustomUser, Tag
 import locale
