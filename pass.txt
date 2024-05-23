@@ -1,0 +1,2 @@
+логин: test@gmail.com
+пароль: test
